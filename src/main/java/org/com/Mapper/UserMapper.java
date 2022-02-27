@@ -9,4 +9,7 @@ import org.com.Entity.User;
 public interface UserMapper {
     @Select("select * from t_user where user_name=#{user_name}")
     public User QuerybyName(String user_name);
+
+    @Insert("insert into t_user(user_name,user_password,user_phone) values(#{user_name},#{user_password},#{user_phone})")
+    public int register(User user);
 }

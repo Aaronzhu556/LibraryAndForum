@@ -54,6 +54,10 @@
 					'101': 'iconfont el-icon-s-management',
 					'102': 'iconfont el-icon-s-order',
 					'145': 'iconfont el-icon-s-data',
+
+					'150': 'iconfont el-icon-collection',
+					'151': 'iconfont el-icon-s-grid',
+
 				},
 				//是否折叠
 				isCollapse: false,
@@ -78,16 +82,22 @@
 			getMenuList() {
 
 				//权限管理最后弄  怕写不完
-				const managerRole = sessionStorage.getItem('managerRole');
-				console.log(managerRole);
-				if (managerRole==="super") {
-					this.menulist = [{
+				const role = sessionStorage.getItem('role');
+				console.log(role);
+				if (role==="user") {
+					this.menulist = [
+						{
+							"id": 150,
+							"authName": "图书借阅",
+							"path" :"books",
+							"children" :[{"id" : 151,"authName" : "图书检索与借阅", "path" : "books", "children" : [],"order": null}],
+							"order": 2
+						},
+							{
 						"id": 125,
 						"authName": "用户管理",
 						"path": "users",
-						"children": [{"id": 110, "authName": "用户列表", "path": "users", "children": [], "order": null}
-
-							],
+						"children": [{"id": 110, "authName": "用户列表", "path": "users", "children": [], "order": null}],
 						"order": 2
 					}, {
 						"id": 103,

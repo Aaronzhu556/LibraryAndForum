@@ -1,37 +1,28 @@
 <template>
 	<div class="login_container">
-		<div class="login_box" v-if="register">
 
-			<!--登录表单区域-->
-			<el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" class="login_form" >
-				<el-form-item prop="managername">
-					<el-input v-model="loginForm.managername" prefix-icon="el-icon-user-solid"></el-input>
-				</el-form-item>
-				<el-form-item prop="password">
-					<el-input v-model="loginForm.password" prefix-icon="el-icon-lock" show-password></el-input>
-				</el-form-item>
-				<el-form-item class="btns">
-					<el-button type="primary" @click="login">注册</el-button>
-					<el-button type="info" @click="register=false">去登陆</el-button>
-				</el-form-item>
-			</el-form>
-		</div>
-		<div class="login_box" v-else>
+		<div class="login_box">
 			<!--头像区域-->
 <!--			<div class="avatar_box">-->
 <!--				<img src="../assets/avatar.jpg" alt="">-->
 <!--			</div>-->
 			<!--登录表单区域-->
 			<el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" class="login_form">
-				<el-form-item prop="managername">
-					<el-input v-model="loginForm.managername" prefix-icon="el-icon-user-solid"></el-input>
+				<el-form-item prop="name">
+					<el-input v-model="loginForm.name" prefix-icon="el-icon-user-solid"></el-input>
 				</el-form-item>
 				<el-form-item prop="password">
 					<el-input v-model="loginForm.password" prefix-icon="el-icon-lock" show-password></el-input>
 				</el-form-item>
+				<el-radio-group v-model="loginForm.radio">
+					<el-radio :label=1>作为用户登录</el-radio>
+					<el-radio :label=0>作为管理员登录</el-radio>
+
+				</el-radio-group>
 				<el-form-item class="btns">
 					<el-button type="primary" @click="login">登录</el-button>
-					<el-button type="info" @click="register=true">去注册</el-button>
+
+					<el-button type="info" @click="goRegister">去注册</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
@@ -45,75 +36,116 @@
 		data() {
 
 			return {
-				register: false,
 				loginForm: {
-					name: 'admin',
-					password: '123456'
+					name: '',
+					password: '',
+					radio: 1
 				},
 				loginFormRules: {
-					managername: [
+					name: [
 						{required: true, message: '请输入用户名', trigger: 'blur'},
 					],
 					password: [
 						{required: true, message: '请输入密码', trigger: 'blur'},
 					]
-				}
+				},
+
+
+
 			}
 		},
 		methods: {
 			resetLoginForm() {
 				this.$refs.loginFormRef.resetFields();
 			},
+			goRegister(){
+				console.log("草拟吗");
+				this.$router.push('/register').catch(err=>(console.log(err)));
+			},
 			login() {
 				this.$refs.loginFormRef.validate(valid => {
 					if (valid) {
-						axios.post("/api/manager/login",JSON.stringify({
-									user_name:this.loginForm.managername,
-									user_password:this.loginForm.password
-								}), {
-							headers: {
-								'Content-Type': 'application/json'
-							}
-						}).then(response => {
-							 console.log(response.data)
-							if (parseInt(response.data.code) === 200) {
-								console.log(response.headers.token);
-								sessionStorage.setItem('token',response.headers.token);
-								sessionStorage.setItem('managerRole',response.data.info);
+						if (this.loginForm.radio){
+							axios.post("/api/user/login",JSON.stringify({
+								user_name:this.loginForm.name,
+								user_password:this.loginForm.password
+							}), {
+								headers: {
+									'Content-Type': 'application/json'
+								}
+							}).then(response => {
+								console.log(response.data)
+								if (parseInt(response.data.code) === 200) {
+									console.log(response.headers.token);
+									sessionStorage.setItem('token',response.headers.token);
+									sessionStorage.setItem('role',"user");
+									this.$message({
+										showClose: true,
+										message: '登录成功',
+										type: 'success'
+									});
+									this.$router.push('/home')
+								} else if (parseInt(response.data.code) === 202){
+									this.$message.error({
+										showClose:true,
+										message:'账户被冻结,请联系管理员',
+										type:'error'
+									});
+								}
+								else if (parseInt(response.data.code) === 201){
+									this.$message.error({
+										showClose:true,
+										message:'账户名或者密码错误',
+										type:'error'
+									});
+								}
+								else if (parseInt(response.data.code) === 203){
+									this.$message.error({
+										showClose:true,
+										message:"无此用户,请检查后重新登录",
+										type:'error'
+									});
+								}
+								else  {
+									this.$message.error({
+										showClose:true,
+										message:'登录失败',
+										type:'error'
+									});
+								}
+							}).catch(function (error) {
+								console.log(error);
+							})
+						}
+						else{
+							axios.post("/api/manager/login",JSON.stringify({
+								manager_name:this.loginForm.name,
+								manager_password:this.loginForm.password
+							}), {
+								headers: {
+									'Content-Type': 'application/json'
+								}
+							}).then(response=>{
+								if (parseInt(response.data.code) === 200){
+									sessionStorage.setItem('token',response.headers.token);
+									sessionStorage.setItem('role',"manager");
+									this.$message({
+										showClose:true,
+										message:'登录成功',
+										type:'success'
+									})
+									this.$router.push('/home')
+								}
+							}).catch(function (error) {
+								console.log(error);
+							})
+						}
 
-								this.$message({
-									showClose: true,
-									message: '登录成功',
-									type: 'success'
-								});
-								this.$router.push('/home')
-							} else if (parseInt(response.data.code) === 202){
-								this.$message.error({
-									showClose:true,
-									message:'账户被冻结,请联系管理员',
-									type:'error'
-								});
-							}
-							else if (parseInt(response.data.code) === 203){
-								this.$message.error({
-									showClose:true,
-									message:'账户名或者密码错误',
-									type:'error'
-								});
-							}
-							else  {
-								this.$message.error({
-									showClose:true,
-									message:'登录失败',
-									type:'error'
-								});
-							}
-						}).catch(function (error) {
-							console.log(error);
-						})
+
 					}
 				})
-			}
+			},
+
 		}
 	}
 </script>
@@ -154,6 +186,7 @@
 			}
 		}
 	}
+
 
 	.login_form {
 		position: absolute;

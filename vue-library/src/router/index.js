@@ -14,6 +14,8 @@ import GoodsAdd from "../components/goods/Add";
 import GoodsEdit from "../components/goods/Edit";
 import Order from "../components/order/Order";
 import Report from "../components/report/Report";
+import Register from "../components/Register";
+import Books from "../components/books/Books";
 
 Vue.use(VueRouter)
 
@@ -27,6 +29,10 @@ const routes = [
 		component: Login
 	},
 	{
+		path: '/register',
+		component: Register
+	},
+	{
 		path: '/home',
 		component: Home,
 		redirect: '/welcome',
@@ -34,6 +40,10 @@ const routes = [
 			{
 				path: '/welcome',
 				component: Welcome
+			},
+			{
+				path: '/books',
+				component: Books
 			},
 			{
 				path: '/users',

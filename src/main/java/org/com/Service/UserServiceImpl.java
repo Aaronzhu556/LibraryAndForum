@@ -34,4 +34,12 @@ public class UserServiceImpl implements UserService {
         return code;
 
     }
+
+    @Override
+    public String UserRegister(User user){
+        user.setUser_password(PasswordUtil.getPassword(user.getUser_password()));
+        int register = userMapper.register(user);
+        if (register!=0) return "200";
+        else return "201";//注册失败
+    }
 }
