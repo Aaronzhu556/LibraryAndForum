@@ -1,6 +1,7 @@
 package org.com.Service;
 
 import org.com.Entity.Book;
+import org.com.Entity.QueryInfo;
 import org.com.Mapper.BookMapper;
 import org.com.Service.Interface.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ public class BookServiceImpl implements BookService {
     }
     @Override
     public List<Book> QueryBookAll(){
-        List<Book> books = bookMapper.QueryBookAll();
-        return null;
+        return  bookMapper.QueryBookAll();
     }
 }

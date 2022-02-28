@@ -74,8 +74,10 @@
                 queryInfo: {
                     querytext: '',
                     pagenum: 1,
-                    pagesize: 16
+                    pagesize: 16,
                 },
+
+                bookList:[],
             }
         },
         created() {
