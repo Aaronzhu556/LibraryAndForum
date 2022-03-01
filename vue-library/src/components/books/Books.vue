@@ -78,14 +78,17 @@
                 },
 
                 bookList:[],
+                bookList_new :[],
             }
         },
         created() {
             this.getBookList()
         },
         methods:{
+
+
             getBookList() {
-                axios.post('/api/feedback/Searchall',JSON.stringify({
+                axios.post('/api/book/querybooks',JSON.stringify({
                     //querytext:this.queryInfo.querytext,
                     pagenum:this.queryInfo.pagenum,
                     pagesize:this.queryInfo.pagesize,
@@ -97,9 +100,12 @@
 
                 }).then(response => {
                     if (parseInt(response.data.code) === 200) {
-                        this.goodsList = response.data.object;
+                        this.bookList = response.data.object;
 
-                        this.total = parseInt(response.data.info);
+
+                        var count = this.bookList.length/4
+
+                        //this.total = parseInt(response.data.info);  这是为了记录一页最大数量   因为大多数时候都是不满一页的
                     } else {
                         this.$message.info(response.data.msg)
                     }
