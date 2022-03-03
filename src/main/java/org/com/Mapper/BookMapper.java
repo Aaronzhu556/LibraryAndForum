@@ -11,6 +11,6 @@ public interface BookMapper {
     @Select("select * from t_book where book_name=#{book_name}")
     public List<Book> QueryBookByName(String book_name);
 
-    @Select("select & from t_book")
+    @Select("select * from t_book")
     public List<Book> QueryBookAll();
 }

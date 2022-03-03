@@ -14,12 +14,11 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private BookMapper bookMapper;
     @Override
-    public List<Book> QueryBookByName(String book_name){
-        List<Book> books = bookMapper.QueryBookByName(book_name);
-        return null;
+    public List<Book> QueryBook(String book_name){
+        if (book_name.equals("")){
+            return bookMapper.QueryBookAll();
+        }else return bookMapper.QueryBookByName(book_name);
+
     }
-    @Override
-    public List<Book> QueryBookAll(){
-        return  bookMapper.QueryBookAll();
-    }
+
 }

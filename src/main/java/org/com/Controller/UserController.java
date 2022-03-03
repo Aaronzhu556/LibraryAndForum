@@ -25,20 +25,20 @@ public class UserController {
         if (code=="200") {
             String token = JwtUtil.CreateToken(user.getUser_name());
             response.setHeader("token",token); //JWT验证
-            return new MyResponse(code,"登陆成功");
+            return new MyResponse(code,"登陆成功","",null,"");
         }
 
-        else if (code=="201") return new MyResponse(code,"密码错误");
-        else if (code=="202") return new MyResponse(code,"用户被冻结");
-        else if (code=="203") return new MyResponse(code,"无此用户");
-        else return new MyResponse(code,"发生错误");
+        else if (code=="201") return new MyResponse(code,"密码错误","",null,"");
+        else if (code=="202") return new MyResponse(code,"用户被冻结","",null,"");
+        else if (code=="203") return new MyResponse(code,"无此用户","",null,"");
+        else return new MyResponse(code,"发生错误","",null,"");
     }
 
     @ResponseBody
     @RequestMapping("/register")
     public MyResponse Register(@RequestBody User user){
         String code = userService.UserRegister(user);
-        if (code.equals("200")) return new MyResponse(code,"注册成功");
-        else return new MyResponse(code,"注册失败");
+        if (code.equals("200")) return new MyResponse(code,"注册成功","",null,"");
+        else return new MyResponse(code,"注册失败","",null,"");
     }
 }

@@ -8,6 +8,6 @@ import java.util.List;
 
 @Service
 public interface BookService {
-    public List<Book> QueryBookByName(String book_name);
-    public List<Book> QueryBookAll();
+    public List<Book> QueryBook(String book_name);
+
 }

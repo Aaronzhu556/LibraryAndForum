@@ -25,11 +25,11 @@ public class ManagerController {
         String code = managerService.managerLogin(manager.getManager_name(), manager.getManager_password());
         if (code=="200") {
             response.setHeader("token", JwtUtil.CreateToken(manager.getManager_name()));
-            return new MyResponse(code, "登录成功");
+            return new MyResponse(code, "登录成功","",null,"");
         }
-        else if (code=="201") return new MyResponse(code,"密码错误,请检查后再登录");
-        else if (code=="202") return new MyResponse(code,"无此管理员");
-        else return new MyResponse(code,"登录错误");
+        else if (code=="201") return new MyResponse(code,"密码错误,请检查后再登录","",null,"");
+        else if (code=="202") return new MyResponse(code,"无此管理员","",null,"");
+        else return new MyResponse(code,"登录错误","",null,"");
 
     }
 }
