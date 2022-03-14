@@ -46,8 +46,9 @@
                 <el-descriptions-item label="ISBN">{{this.bookData[3]}}</el-descriptions-item>
                 <el-descriptions-item label="价  格">{{this.bookData[5]}}</el-descriptions-item>
                 <el-descriptions-item label="状  态">
-                    <el-tag size="small" type="success" v-if="this.bookData[4]">空闲</el-tag>
-                    <el-tag size="small" type="danger" v-else >已借出</el-tag>
+                    <el-tag size="small" type="success" v-if="this.bookData[4]=='1'">空闲</el-tag>
+                    <el-tag size="small" type="danger" v-else-if="this.bookData[4]=='0'" >已被借出</el-tag>
+                    <el-tag size="small" type="warning" v-else >已被预约</el-tag>
                 </el-descriptions-item>
                 <el-descriptions-item label="类  别">
                     <el-tag size="small"  >{{this.bookData[6]}}</el-tag>
@@ -63,8 +64,8 @@
                 </el-descriptions-item>
             </el-descriptions>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="previewDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="previewDialogVisible = false">确 定</el-button>
+                <el-button @click="previewDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="borrowBook()" :disabled="this.bookData[4]=='1'?false:true">预约借书</el-button>
             </span>
         </el-dialog>
 
@@ -128,6 +129,30 @@
             this.getBookList()
         },
         methods:{
+            borrowBook(){
+                var  current_id = parseInt(this.bookData[0]);
+                console.log(current_id)
+                axios.get('/api/book/borrowbooks',
+                    {
+                        params:{ book_id: current_id},
+                        headers: {
+                            'Authorization': sessionStorage.getItem('token')}
+
+                    }
+                ).then(response =>{
+                    if(parseInt(response.data.code)===200){
+                        this.$message.success(response.data.msg)
+                        this.getBookList();
+                    }else if (parseInt(response.data.code)===201){
+                        this.$message.info(response.data.msg)
+                    }else this.$message.error(response.data.msg)
+                }).catch((e)=>{
+                    this.$message.error("发生错误")
+                })
+            },
+
+
+
             showbook(current_data){
                 this.bookData = [];
                 this.bookData.push(current_data.book_id)

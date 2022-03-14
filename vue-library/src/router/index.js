@@ -7,11 +7,11 @@ import Users from "../components/user/Users";
 import Managers from "../components/user/Managers";
 import Rights from "../components/shop/Rights";
 import Roles from "../components/shop/Shops";
-import Cate from "../components/goods/Cate";
-import Params from "../components/goods/Params";
-import GoodsList from "../components/goods/List";
-import GoodsAdd from "../components/goods/Add";
-import GoodsEdit from "../components/goods/Edit";
+import Cate from "../components/books-admin/Cate";
+import Params from "../components/books-admin/Params";
+import BooksList from "../components/books-admin/List";
+import BooksAdd from "../components/books-admin/Add";
+import BooksEdit from "../components/books-admin/Edit";
 import Order from "../components/order/Order";
 import Report from "../components/report/Report";
 import Register from "../components/Register";
@@ -70,16 +70,16 @@ const routes = [
 				component: Params
 			},
 			{
-				path: '/goods',
-				component: GoodsList
+				path: '/books_admin',
+				component: BooksList
 			},
 			{
-				path: '/goods/add',
-				component: GoodsAdd
+				path: '/books_admin/add',
+				component: BooksAdd
 			},
 			{
-				path: '/goods/edit/:id',
-				component: GoodsEdit
+				path: '/books_admin/edit/:id',
+				component: BooksEdit
 			},
 			{
 				path: '/orders',

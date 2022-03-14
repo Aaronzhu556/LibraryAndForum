@@ -6,4 +6,5 @@ import org.com.Entity.*;
 public interface UserService {
     public String UserLogin(String user_name, String user_password);
     public String UserRegister(User user);
+
 }

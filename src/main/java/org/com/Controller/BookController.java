@@ -3,15 +3,15 @@ package org.com.Controller;
 
 import org.com.Entity.Book;
 import org.com.Entity.QueryInfo;
+import org.com.Entity.User;
 import org.com.MyResponse.MyResponse;
 import org.com.Service.Interface.BookService;
+import org.com.Service.Interface.BorrowService;
+import org.com.Service.Interface.UserService;
 import org.com.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +21,9 @@ import java.util.List;
 public class BookController {
     @Autowired
     private BookService bookService;
+    private BorrowService borrowService;
+
+
     /*
     @ResponseBody
     @RequestMapping("/querybooks")
@@ -56,7 +59,7 @@ public class BookController {
             if (!books.isEmpty()){
 
                 int count = 0;
-                if (!queryInfo.getQuerydata().equals(queryInfo.getQuerytext())&&queryInfo.getPagenum()!=1) { // 说明
+                if (!queryInfo.getQuerydata().equals(queryInfo.getQuerytext())&&queryInfo.getPagenum()!=1) { // 说明这是第一次查询
                     for (int i = 0; count < queryInfo.getPagesize(); i++) {
                         try {
                             bookList.add(books.get(i));
@@ -81,6 +84,36 @@ public class BookController {
                 return new MyResponse("200","查询成功",String.valueOf(books.size()),bookList,String.valueOf(page));
             }else return new MyResponse("201","没有这本书,请联系管理员~","",null,"");
 
+        }else return new MyResponse("202","JWt验证失败","",null,"");
+
+    }
+
+    /**   
+     * 预约借书  这个功能我还没确定用redis还是简单逻辑判断
+     *
+     * ok 用redis吧
+     * */
+    @ResponseBody
+    @RequestMapping("/borrowbooks")//这里没写完   借书完了应该要加一条借阅记录
+    public MyResponse borrowBooks(@RequestParam int book_id, @RequestHeader("Authorization") String token){
+        if (JwtUtil.VerifyToken(token)){
+            String code = "";
+
+            String user_name = JwtUtil.GetInformation(token);
+            code = bookService.BorrowBook(book_id,user_name);
+            //String s = borrowService.AddBookBorrowInfo(user_name, book_id);
+            if (code == "200") return new MyResponse(code,"预约成功,请您尽快取书","",null,"");
+            else return new MyResponse(code,"预约失败,您已经借了5本书了","",null,"");
+        }else return new MyResponse("202","Jwt验证失败","",null,"");
+    }
+
+    @ResponseBody
+    @RequestMapping("/deletebooks")
+    public MyResponse deletedbooks(@RequestParam int book_id,  @RequestHeader("Authorization") String token){
+        if (JwtUtil.VerifyToken(token)){
+            String code = bookService.DeleteBook(book_id);
+            if (code=="200") return new MyResponse(code,"删除成功","",null,"");
+            else return new MyResponse(code,"删除失败,发生错误","",null,"");
         }else return new MyResponse("202","JWt验证失败","",null,"");
 
     }

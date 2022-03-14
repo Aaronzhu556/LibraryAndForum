@@ -93,13 +93,7 @@
 							"children" :[{"id" : 151,"authName" : "图书检索与借阅", "path" : "books", "children" : [],"order": null}],
 							"order": 2
 						},
-							{
-						"id": 125,
-						"authName": "用户管理",
-						"path": "users",
-						"children": [{"id": 110, "authName": "用户列表", "path": "users", "children": [], "order": null}],
-						"order": 2
-					}, {
+						 {
 						"id": 103,
 						"authName": "文件管理",
 						"path": "rights",
@@ -125,20 +119,20 @@
 						"order": 3
 					}]
 				}
-				else if (managerRole==="saler"){
+				else if (role==="manager"){
 					this.menulist=[{
 						"id": 101,
-						"authName": "商品管理",
-						"path": "goods",
+						"authName": "书籍管理",
+						"path": "books_admin",
 						"children": [{
 							"id": 104,
-							"authName": "商品列表",
-							"path": "goods",
+							"authName": "书籍列表",
+							"path": "books_admin",
 							"children": [],
 							"order": 1
-						}, {"id": 115, "authName": "分类参数", "path": "params", "children": [], "order": 2}, {
+						},  {
 							"id": 121,
-							"authName": "商品分类",
+							"authName": "书籍分类",
 							"path": "categories",
 							"children": [],
 							"order": 3
@@ -146,11 +140,18 @@
 						"order": 3
 					}, {
 						"id": 102,
-						"authName": "订单管理",
+						"authName": "预约管理",
 						"path": "orders",
-						"children": [{"id": 107, "authName": "订单列表", "path": "orders", "children": [], "order": null}],
+						"children": [{"id": 107, "authName": "预约列表", "path": "orders", "children": [], "order": null}],
 						"order": 4
-					}, {
+					}, 	{
+						"id": 125,
+						"authName": "用户管理",
+						"path": "users",
+						"children": [{"id": 110, "authName": "用户列表", "path": "users", "children": [], "order": null}],
+						"order": 2
+					},
+						{
 						"id": 145,
 						"authName": "数据统计",
 						"path": "reports",

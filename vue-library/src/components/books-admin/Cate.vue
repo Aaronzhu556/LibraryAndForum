@@ -3,8 +3,8 @@
 		<!--面包屑导航区-->
 		<el-breadcrumb separator-class="el-icon-arrow-right">
 			<el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-			<el-breadcrumb-item>商品管理</el-breadcrumb-item>
-			<el-breadcrumb-item>商品分类</el-breadcrumb-item>
+			<el-breadcrumb-item>书籍管理</el-breadcrumb-item>
+			<el-breadcrumb-item>书籍分类</el-breadcrumb-item>
 		</el-breadcrumb>
 
 		<!--卡片视图区域-->
@@ -51,7 +51,7 @@
 
 			<!--分页-->
 			<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="queryInfo.pagenum"
-			               :page-sizes="[1, 2, 5, 10]" :page-size="queryInfo.pagesize" :total="total"
+			               :page-sizes="[4,8,16]" :page-size="queryInfo.pagesize" :total="total"
 			               layout="total, sizes, prev, pager, next, jumper" background>
 			</el-pagination>
 		</el-card>
@@ -230,7 +230,7 @@
 			},
 			//获取父级分类的数据列表
 			getParentCateList() {
-				axios.get('/api/category/getparent', {params: {category_level: "2"}}).then(response => {
+				axios.get('/api/category/getparent', {params: {category_level: "1"}}).then(response => {
 					if (parseInt(response.data.code) === 200) {
 						this.parentCateList = response.data.object;
 					} else {

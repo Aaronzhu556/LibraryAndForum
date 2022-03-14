@@ -9,5 +9,7 @@ import java.util.List;
 @Service
 public interface BookService {
     public List<Book> QueryBook(String book_name);
+    public String BorrowBook(int book_id,String user_name);
+    public String DeleteBook(int book_id);
 
 }
