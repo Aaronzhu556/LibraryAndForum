@@ -35,6 +35,7 @@
 
 				<el-table-column label="书籍价格(元)" prop="book_money" ></el-table-column>
 				<el-table-column label="出版社" prop="book_address" ></el-table-column>
+				<el-table-column label="书籍分类" prop="book_category_name" ></el-table-column>
 				<el-table-column label="书籍状态" prop= "book_status" width="200">
 					<template slot-scope="scope">
 						<el-tag size="small" type="success" v-if="scope.row.book_status=='1'">空闲</el-tag>

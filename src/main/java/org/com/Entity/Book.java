@@ -14,10 +14,11 @@ public class Book {
     private String book_isbn;
     private String book_status;
     private String book_money;
-    private String book_category;
+    private int book_category;
+    private String book_category_name;
     private String book_address;
     Book(){}
-    public Book(String book_name, String book_img, String book_isbn, String book_status, String book_money, String book_category,String book_address) {
+    public Book(String book_name, String book_img, String book_isbn, String book_status, String book_money, int book_category,String book_address) {
         this.book_name = book_name;
         this.book_img = book_img;
         this.book_isbn = book_isbn;

@@ -16,6 +16,7 @@ import Order from "../components/order/Order";
 import Report from "../components/report/Report";
 import Register from "../components/Register";
 import Books from "../components/books/Books";
+import Appointment from "../components/order/Appointment";
 
 Vue.use(VueRouter)
 
@@ -80,6 +81,10 @@ const routes = [
 			{
 				path: '/books_admin/edit/:id',
 				component: BooksEdit
+			},
+			{
+				path: '/appointment',
+				component: Appointment
 			},
 			{
 				path: '/orders',

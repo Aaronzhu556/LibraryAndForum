@@ -5,7 +5,10 @@ import org.com.Entity.User;
 
 import java.util.LinkedList;
 import java.util.List;
-
+/**
+ * created by @Aaronzhu.Soton in 2022.03.14
+ *
+ * */
 public class BuildTreeUtil {
 
     public final static List<User> BuildTreeForUser(List<User> Users){

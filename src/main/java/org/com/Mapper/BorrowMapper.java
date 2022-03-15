@@ -8,7 +8,7 @@ import org.com.Entity.Borrow;
 public interface BorrowMapper {
 
 
-    @Insert("insert into t_borrow (borrow_book_id,borrow_start_time,borrow_end_time,borrow_end_time_true,borrow_user_name) values(#{borrow_book_id} ,#{borrow_start_time}, #{borrow_end_time} ,#{borrow_end_time_true},#{borrow_user_name})")
+    @Insert("insert into t_borrow (borrow_book_id,borrow_start_time,borrow_end_time,borrow_end_time_true,borrow_user_name,borrow_user_temperature) values(#{borrow_book_id} ,#{borrow_start_time}, #{borrow_end_time} ,#{borrow_end_time_true},#{borrow_user_name},#{borrow_user_temperature})")
     public int AddBorrowBook_info(Borrow borrow);
 
 

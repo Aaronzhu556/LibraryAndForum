@@ -4,12 +4,14 @@ import org.com.Entity.Book;
 import org.com.Entity.QueryInfo;
 import org.com.Entity.User;
 import org.com.Mapper.BookMapper;
+import org.com.Mapper.CategoryMapper;
 import org.com.Mapper.UserMapper;
 import org.com.Redis.RedisServer;
 import org.com.Service.Interface.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -23,11 +25,46 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private RedisServer redisServer;
 
+    @Autowired
+    private CategoryMapper categoryMapper;
+
     @Override
     public List<Book> QueryBook(String book_name){
+        int category_id;
         if (book_name.equals("")){
-            return bookMapper.QueryBookAll();
-        }else return bookMapper.QueryBookByName(book_name);
+            List<Book> bookList = bookMapper.QueryBookAll();
+            for (Book book: bookList){
+                List<String> Namelist = new LinkedList<>();
+                category_id = book.getBook_category();
+                int parent;
+                do {
+                    Namelist.add(categoryMapper.QueryNameByID(category_id));
+                    parent=categoryMapper.QueryParentById(category_id);
+                    category_id = parent;
+                }while(parent!=0);
+                book.setBook_category_name(Namelist.toString());
+
+            }
+            return bookList;
+        }else {
+            List<Book> bookList = bookMapper.QueryBookByName(book_name);
+            for (Book book: bookList){
+                List<String> Namelist = new LinkedList<>();
+                category_id = book.getBook_category();
+                int parent;
+                do {
+                    Namelist.add(categoryMapper.QueryNameByID(category_id));
+                    parent=categoryMapper.QueryParentById(category_id);
+                    category_id = parent;
+                }while(parent!=0);
+                book.setBook_category_name(Namelist.toString());
+
+            }
+            return bookList;
+        }
+
+
+
 
     }
 

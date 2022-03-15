@@ -142,7 +142,7 @@
 						"id": 102,
 						"authName": "预约管理",
 						"path": "orders",
-						"children": [{"id": 107, "authName": "预约列表", "path": "orders", "children": [], "order": null}],
+						"children": [{"id": 107, "authName": "预约列表", "path": "appointment", "children": [], "order": null}],
 						"order": 4
 					}, 	{
 						"id": 125,
