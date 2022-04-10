@@ -17,7 +17,10 @@ import Report from "../components/report/Report";
 import Register from "../components/Register";
 import Books from "../components/books/Books";
 import Appointment from "../components/order/Appointment";
-
+import Forum_List from "../components/Forum/List-forum";
+import Forum_details from "../components/Forum/forum-details";
+import Forum_List_admin from "../components/forum-admin/List";
+import test from "../components/seats/test";
 Vue.use(VueRouter)
 
 const routes = [
@@ -85,6 +88,23 @@ const routes = [
 			{
 				path: '/appointment',
 				component: Appointment
+			},
+			{
+				path: '/forum_list',
+				component: Forum_List
+			},
+			{
+				path: '/forum_details/:articleid/:articletitle/:articleusername',
+				name: 'forum_details',
+				component: Forum_details
+			},
+			{
+				path: '/forum_list_admin',
+				component: Forum_List_admin
+			},
+			{
+				path:'/seat_test',
+				component: test
 			},
 			{
 				path: '/orders',

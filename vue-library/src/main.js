@@ -14,6 +14,16 @@ import 'quill/dist/quill.bubble.css' // for bubble theme
 //进度条
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
+//iview
+
+import iView from 'iview'
+import 'iview/dist/styles/iview.css';
+Vue.use(iView);
+
+//Vuefy
+import Buefy from 'buefy';
+import 'buefy/dist/buefy.css';
+Vue.use(Buefy)
 
 //axios.defaults.withCredentials = true // 设置cross跨域 并设置访问权限 允许跨域携带cookie信息
 

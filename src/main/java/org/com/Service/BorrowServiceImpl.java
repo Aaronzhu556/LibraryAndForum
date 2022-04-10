@@ -28,7 +28,7 @@ public class BorrowServiceImpl implements BorrowService {
     public String AddBookBorrowInfo(String user_name,int book_id,String temperature){
         User user = userMapper.QuerybyName(user_name);
         if (Integer.parseInt(user.getUser_book_num())<5) {
-            SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:00:00");
+            SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
             Date time_start = new Date();
             long time_end_s =  time_start.getTime()+864000000;

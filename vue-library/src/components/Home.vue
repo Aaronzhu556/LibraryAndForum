@@ -57,6 +57,7 @@
 
 					'150': 'iconfont el-icon-collection',
 					'151': 'iconfont el-icon-s-grid',
+					'152': 'el-icon-tickets',
 
 				},
 				//是否折叠
@@ -95,24 +96,24 @@
 						},
 						 {
 						"id": 103,
-						"authName": "文件管理",
+						"authName": "书友论坛",
 						"path": "rights",
 						"children": [{
 							"id": 111,
-							"authName": "文件列表",
-							"path": "roles",
+							"authName": "书友论坛",
+							"path": "forum_list",
 							"children": [],
 							"order": null
 						}],
 						"order": 2
 					}, {
 						"id": 101,
-						"authName": "反馈管理",
-						"path": "goods",
+						"authName": "位置预约",
+						"path": "seat_test",
 						"children": [{
 							"id": 104,
-							"authName": "反馈列表",
-							"path": "goods",
+							"authName": "位置预约",
+							"path": "seat_test",
 							"children": [],
 							"order": 1
 						}],
@@ -144,7 +145,15 @@
 						"path": "orders",
 						"children": [{"id": 107, "authName": "预约列表", "path": "appointment", "children": [], "order": null}],
 						"order": 4
-					}, 	{
+					},
+						{
+						"id": 152,
+						"authName": "论坛管理",
+						"path": "forum_list_admin",
+						"children": [{"id": 107, "authName": "论坛管理", "path": "forum_list_admin", "children": [], "order": null}],
+						"order": 4
+					},
+						{
 						"id": 125,
 						"authName": "用户管理",
 						"path": "users",

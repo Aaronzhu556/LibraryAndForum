@@ -72,7 +72,7 @@ public class BookController {
                 }else {
                     for (int i = ((queryInfo.getPagenum() - 1) * queryInfo.getPagesize()); count < queryInfo.getPagesize(); i++) {
                         try {
-                            System.out.println("caocao coaocoao");
+
                             bookList.add(books.get(i));
                             count++;
                         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class BookController {
      * ok 用redis吧
      * */
     @ResponseBody
-    @RequestMapping("/borrowbooks")//这里没写完   借书完了应该要加一条借阅记录
+    @RequestMapping("/borrowbooks")//这里没写完   借书完了应该要加一条借阅记录---已解决
     public MyResponse borrowBooks(@RequestParam int book_id, @RequestHeader("Authorization") String token){
         if (JwtUtil.VerifyToken(token)){
             String code = "";

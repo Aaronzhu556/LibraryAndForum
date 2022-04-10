@@ -3,26 +3,34 @@
         <!--面包屑导航区-->
         <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item>预约管理</el-breadcrumb-item>
-            <el-breadcrumb-item>预约列表</el-breadcrumb-item>
+            <el-breadcrumb-item>论坛管理</el-breadcrumb-item>
+            <el-breadcrumb-item>帖子列表</el-breadcrumb-item>
         </el-breadcrumb>
 
         <el-card>
-
+            <!--搜索与添加-->
+            <el-row :gutter="10">
+                <el-col :span="6">
+                    <el-input placeholder="请输入内容" v-model="queryInfo.querytext" :clearable="true" @clear="getArticleList">
+                        <el-button slot="append" icon="el-icon-search" @click="getArticleList"></el-button>
+                    </el-input>
+                </el-col>
+<!--                <el-col :span="6">-->
+<!--                    <el-button type="primary" @click="goAddPage" >添加书籍</el-button>-->
+<!--                </el-col>-->
+            </el-row>
 
             <!--table表格-->
-            <el-table :data="appointmentList" border stripe>
-                <el-table-column label="预约编号" prop="appointment_id"></el-table-column>
-                <el-table-column label="书籍编号" prop="appointment_book_id"></el-table-column>
+            <el-table :data="articleList_admin" border stripe>
+                <el-table-column label="帖子编号" prop="article_id"></el-table-column>
 
-                <el-table-column label="用户名" prop="appointment_user_name"></el-table-column>
-
-                <el-table-column label="过期时间(分)" prop="appointment_expire_time"></el-table-column>
-
+                <el-table-column label="帖子标题" prop="article_title"></el-table-column>
+                <el-table-column label="帖子内容" prop="article_content"></el-table-column>
+                <el-table-column label="发帖人" prop="article_user_name"></el-table-column>
 
                 <el-table-column label="操作"  width="200">
                     <template slot-scope="scope">
-                        <el-button type="primary" icon="el-icon-star-off" @click="open(scope.row)"  circle></el-button>
+                        <el-button type="danger" icon="el-icon-delete" @click="open(scope.row)"  circle></el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -33,13 +41,18 @@
                            layout="total, sizes, prev, pager, next, jumper" background>
             </el-pagination>
         </el-card>
+        <!--图片预览-->
+        <el-dialog title="图片预览" width="50%" :visible.sync="previewDialogVisible" scroll-container>
+            <!--内容主体-->
 
+            <img :src="previewPath" alt="" class="previewImg">
+        </el-dialog>
     </div>
 </template>
 
 <script>
     export default {
-        name: "List",
+        name: "forum_list_admin",
         data() {
             return {
                 queryInfo: {
@@ -48,20 +61,20 @@
                     pagesize: 4,
                     querydata:'',
                 },
-                appointmentList: [],
+                articleList_admin: [],
                 total: 0,
-
+                previewDialogVisible: false,
                 previewPath : "",
             }
         },
         created() {
-            this.getAppointmentList();
+            this.getArticleList();
             this.managerRole = sessionStorage.getItem('managerRole');
             console.log(this.managerRole);
         },
         methods: {
-            getAppointmentList(){
-                axios.post('/api/appointment/queryallappointment',JSON.stringify({
+            getArticleList(){
+                axios.post('/api/article/getallarticle',JSON.stringify({
                     querytext:this.queryInfo.querytext,
                     pagenum:this.queryInfo.pagenum,
                     pagesize:this.queryInfo.pagesize,
@@ -74,17 +87,16 @@
 
                 }).then(response => {
                     if (parseInt(response.data.code) === 200) {
-                        this.appointmentList = response.data.object;
+                        this.articleList_admin = response.data.object;
                         this.queryInfo.querydata = this.queryInfo.querytext;
                         if (parseInt(response.data.page)===1){
                             this.queryInfo.pagenum = parseInt(response.data.page);
                         }
                         console.log("Hi 这里出错啦")
-                        console.log(this.appointmentList)
+                        console.log(this.bookList)
                         this.total = parseInt(response.data.info);
                     } else {
                         this.$message.info(response.data.msg)
-                        this.appointmentList = response.data.object;
                     }
                 }).catch((e) => {
                     this.$message.error("获取失败")
@@ -106,55 +118,60 @@
             },
 
              */
-            open(current_data) {
-                this.$prompt('请输入借书人体温', '提示', {
+            PreviewPhoto(current_data){
+                this.previewPath = "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png";
+                this.previewDialogVisible = true;
+            },
+            deleteArticle(current_data){
+                axios.get('/api/article/deletearticle',{
+                    params:{
+                        article_id : current_data.article_id,
+                    },
+                    headers:{Authorization: sessionStorage.getItem('token')}
+                }).then((response) => {
+                    if (parseInt(response.data.code) === 200){
+                        this.getArticleList();
+                        this.$message.success(response.data.msg);
+                    }
+                    else {
+                        this.$message.error(response.data.msg);
+                    }
+                }).catch(()=> {
+                    this.$message.error('操作失败');
+                })
+            },
+            open(current_data){
+                this.$confirm('此操作将永久删除该帖子, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
-                    inputPattern : /[1-9]\d*.\d*|0.\d*[1-9]\d*/,
-                    inputErrorMessage: '邮箱格式不正确'
-                }).then(({ value }) => {
-                    this.affirmBook(current_data,value)
-
+                    type: 'warning'
+                }).then(() => {
+                    this.deleteArticle(current_data);
                 }).catch(() => {
                     this.$message({
                         type: 'info',
-                        message: '取消输入'
+                        message: '已取消删除'
                     });
                 });
             },
-            affirmBook(current_data,temperature){
-                axios.post('/api/borrow/borrowbook',JSON.stringify({
-                    borrow_user_name :current_data.appointment_user_name,
-                    borrow_book_id : current_data.appointment_book_id,
-                    borrow_user_temperature : temperature,
-                }), {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
 
-                    }
-                ).then(response =>{
-                    if (parseInt(response.data.code)===200){
-                        this.getAppointmentList();
-                        this.$message.success(response.data.msg)
-                    }else this.$message.error(response.data.msg)
-                }).catch(()=>{
-                    this.$message.error('发生错误')
-                })
-
-
-            },
             //监听pagesize改变的事件
             handleSizeChange(newSize) {
                 this.queryInfo.pagesize = newSize
-                this.getBookList()
+                this.getArticleList()
             },
             //监听页码值改变的事件
             handleCurrentChange(newPage) {
                 this.queryInfo.pagenum = newPage
-                this.getBookList()
+                this.getArticleList()
             },
 
+            goAddPage(){
+                this.$router.push('/books_admin/add')
+            },
+            goEditPage(id){
+                this.$router.push(`/goods/edit/${id}`)
+            }
         }
     }
 </script>

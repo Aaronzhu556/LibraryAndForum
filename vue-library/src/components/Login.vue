@@ -60,7 +60,8 @@
 			},
 			goRegister(){
 				console.log("草拟吗");
-				this.$router.push('/register').catch(err=>(console.log(err)));
+				//this.$router.push('/register').catch(err=>(console.log(err)));
+				this.$router.push('/register');
 			},
 			login() {
 				this.$refs.loginFormRef.validate(valid => {
@@ -79,6 +80,7 @@
 									console.log(response.headers.token);
 									sessionStorage.setItem('token',response.headers.token);
 									sessionStorage.setItem('role',"user");
+									sessionStorage.setItem('user_name',response.data.info);
 									this.$message({
 										showClose: true,
 										message: '登录成功',

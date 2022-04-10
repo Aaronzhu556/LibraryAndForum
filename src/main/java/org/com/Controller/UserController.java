@@ -25,7 +25,7 @@ public class UserController {
         if (code=="200") {
             String token = JwtUtil.CreateToken(user.getUser_name());
             response.setHeader("token",token); //JWT验证
-            return new MyResponse(code,"登陆成功","",null,"");
+            return new MyResponse(code,"登陆成功",user.getUser_name(),null,"");
         }
 
         else if (code=="201") return new MyResponse(code,"密码错误","",null,"");
