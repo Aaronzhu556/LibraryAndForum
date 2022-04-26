@@ -7,101 +7,9 @@
             <el-breadcrumb-item>帖子详情</el-breadcrumb-item>
         </el-breadcrumb>
 
-<!--            &lt;!&ndash;搜索与添加&ndash;&gt;-->
-<!--            <el-row :gutter="10">-->
-<!--                <el-col :span="6">-->
-<!--                    <el-input placeholder="请输入内容" v-model="queryInfo.querytext" :clearable="true" @clear="getArticleList">-->
-<!--                        <el-button slot="append" icon="el-icon-search" @click="getArticleList"></el-button>-->
-<!--                    </el-input>-->
-<!--                </el-col>-->
-<!--                &lt;!&ndash;                <el-col :span="6">&ndash;&gt;-->
-<!--                &lt;!&ndash;                    <el-button type="primary" @click="goAddPage" >添加书籍</el-button>&ndash;&gt;-->
-<!--                &lt;!&ndash;                </el-col>&ndash;&gt;-->
-<!--            </el-row>-->
         <div>
             <div class="Rightbar">
             <div class="sep20"></div>
-<!--            <div class="box">-->
-<!--                <div class="cell">-->
-<!--                    <table cellpadding="0" cellspacing="0" border="0" width="100%">-->
-<!--                        <tbody>-->
-<!--                        <tr>-->
-<!--                            <td width="48" valign="top">-->
-<!--                                <a href="#">-->
-<!--&lt;!&ndash;                                    <img&ndash;&gt;-->
-<!--&lt;!&ndash;                                            :src="require(`@/assets/${$store.state.user.userImg}`)"&ndash;&gt;-->
-<!--&lt;!&ndash;                                            class="avatar"&ndash;&gt;-->
-<!--&lt;!&ndash;                                            border="0"&ndash;&gt;-->
-<!--&lt;!&ndash;                                            align="default"&ndash;&gt;-->
-<!--&lt;!&ndash;                                            style="max-width: 48px; max-height: 48px;"&ndash;&gt;-->
-<!--&lt;!&ndash;                                    />&ndash;&gt;-->
-<!--                                </a>-->
-<!--                            </td>-->
-<!--                            <td width="10" valign="top"></td>-->
-<!--                            <td width="auto" align="left">-->
-<!--                      <span class="bigger">-->
-<!--                       <strong>猜你喜欢</strong>-->
-<!--                      </span>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        </tbody>-->
-<!--                    </table>-->
-<!--                    <div class="sep10"></div>-->
-
-<!--                        <tbody>-->
-<!--                        <div style="height: 350px;width: 100%">-->
-<!--                            <div class="card-content" style="height: 350px">-->
-<!--                                <el-scrollbar style="height: 100%" >-->
-<!--                                    <div v-for="(article,index) in 10" :key="index">-->
-
-<!--                                        <el-tag type="danger">00</el-tag>-->
-
-<!--                                        <el-tooltip class="item" effect="light" placement="top">-->
-<!--                                            <div slot="content">1200</div>-->
-<!--                                            <el-button type="text" style="position: relative;left: 30px;color: 	#000000" @click="CheckHotArticleDetail(article)">222</el-button>-->
-<!--                                        </el-tooltip>-->
-
-
-<!--                                        <strong style="color: #C80000;float: right" >2000</strong>-->
-
-<!--                                        <br><br>-->
-
-<!--                                    </div>-->
-
-
-
-<!--                                </el-scrollbar>-->
-
-<!--                            </div>-->
-
-<!--                        </div>-->
-<!--                        </tbody>-->
-
-<!--                </div>-->
-<!--                <div class="cell" id="member-activity">-->
-<!--                    <div class="member-activity-bar">-->
-<!--                        <div class="member-activity-start" style="width: 15px;"></div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="cell" style="padding: 5px;">-->
-<!--                    <table cellpadding="0" cellspacing="0" border="0" width="100%">-->
-<!--                        <tbody>-->
-<!--                        <tr>-->
-<!--                            <td width="28">-->
-<!--                                <a href="/new">-->
-<!--                                    <img src width="28" border="0" />-->
-<!--                                </a>-->
-<!--                            </td>-->
-<!--                            <td width="10"></td>-->
-<!--                            <td width="auto" valign="middle" align="left">-->
-<!--                                &lt;!&ndash; <a @click="newcomment">在此贴发表评论</a> &ndash;&gt;-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        </tbody>-->
-<!--                    </table>-->
-<!--                </div>-->
-
-<!--            </div>-->
                 <div class="card" >
                     <header class="card-header">
                         <!--                                <div>-->
@@ -139,58 +47,22 @@
 
                 </div>
         </div>
-
-<!--            <div class="Rightbar" style="position: relative;top: 200px;left: 290px">-->
-<!--                <div class="sep20"></div>-->
-<!--                <div class="box">-->
-<!--                    <div class="cell">-->
-<!--                        <table cellpadding="0" cellspacing="0" border="0" width="100%">-->
-<!--                            <tbody>-->
-<!--                            <tr>-->
-<!--                                <td width="48" valign="top">-->
-<!--                                    <a href="#">-->
-<!--                                        &lt;!&ndash;                                    <img&ndash;&gt;-->
-<!--                                        &lt;!&ndash;                                            :src="require(`@/assets/${$store.state.user.userImg}`)"&ndash;&gt;-->
-<!--                                        &lt;!&ndash;                                            class="avatar"&ndash;&gt;-->
-<!--                                        &lt;!&ndash;                                            border="0"&ndash;&gt;-->
-<!--                                        &lt;!&ndash;                                            align="default"&ndash;&gt;-->
-<!--                                        &lt;!&ndash;                                            style="max-width: 48px; max-height: 48px;"&ndash;&gt;-->
-<!--                                        &lt;!&ndash;                                    />&ndash;&gt;-->
-<!--                                    </a>-->
-<!--                                </td>-->
-<!--                                <td width="10" valign="top"></td>-->
-<!--                                <td width="auto" align="left">-->
-<!--                      <span class="bigger">-->
-<!--                          <strong>猜你喜欢</strong>-->
-<!--                      </span>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                            </tbody>-->
-<!--                        </table>-->
-<!--                        <div  style="height: 350px;position: relative;left: 290px;width: 50px;length:100px">-->
-
-<!--                        </div>-->
-
-
-
-<!--                    </div>-->
-
-<!--                </div>-->
-<!--            </div>-->
             <div class="Main">
                 <div class="sep20"></div>
                 <div class="box" style="border-bottom:0px;">
                     <div class="header">
                         <div class="fr">
-                            <a href="#">
-                                <img
-                                        src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-                                        class="avatar"
-                                        border="0"
-                                        align="default"
-                                        style="max-width: 48px; max-height: 48px;"
-                                />
-                            </a>
+
+<!--                                <img-->
+<!--                                        src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"-->
+<!--                                        class="avatar"-->
+<!--                                        border="0"-->
+<!--                                        align="default"-->
+<!--                                        style="max-width: 48px; max-height: 48px;"-->
+<!--                                        click.native=""-->
+<!--                                />-->
+                            <el-avatar :src="article.user_img" @click.native="goToUserHome()"></el-avatar>
+
                         </div>
                         <div class="sep10"></div>
                         <h1 class="h1">{{article.title}}</h1>
@@ -207,7 +79,7 @@
                             <tbody>
                             <tr>
                                 <td width="48" valign="top" align="center">
-                                    <img src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg" class="size" />
+                                    <el-avatar :src="c.comment_user_img"></el-avatar>
 
                                 </td>
                                 <td width="10" valign="top"></td>
@@ -217,12 +89,57 @@
                                         <span class="no"></span>
                                     </div>
                                     <div class="sep3"></div>
-                                    <strong>
-                                        <a href="#" class="dark">{{c.comment_user_name}}</a>
+                                    <strong class="author-name">
+                                         {{c.comment_user_name}}
                                     </strong>&nbsp; &nbsp;
                                     <span class="ago">{{c.comment_time}}</span>
+                                    <div style="display: inline-block;" class="icon-btn">
+                                        <span style="position: relative;right:-500px" @click="deleteComment(c.comment_id)" v-show="c.comment_user_name===user_name"> <i class="el-icon-delete"></i></span>
+                                        <span style="position: relative;right:-520px" @click="open(index,c.comment_user_name)"> <i class="el-icon-chat-dot-round"></i></span>
+                                        <el-link   style="position: relative;right:-580px" v-if="c.comment_box_show===false" @click.native="openReplyBox(index)"> 打开回复({{c.comment_reply_list.length}})</el-link>
+                                        <el-link style="position: relative;right:-580px" v-else @click.native="openReplyBox(index)"> 关闭回复({{c.comment_reply_list.length}})</el-link>
+
+                                    </div>
                                     <div class="sep5"></div>
                                     <div class="reply_content">{{c.comment_content}}</div>
+
+                                    <div class="reply-box" v-show="c.comment_box_show===true" >
+                                        <div v-for="(reply,j) in c.comment_reply_list" :key="j" class="author-title">
+                                            <el-avatar class="header-img"  :src="reply.reply_from_img"></el-avatar>
+                                            <div class="author-info">
+                                                <strong class="author-name">{{reply.reply_from}}</strong>
+                                                <span class="author-time">{{reply.reply_time}}</span>
+                                            </div>
+                                            <div class="icon-btn">
+                                                <span @click="showReplyInput(index,j,reply.reply_from)" style="float: right"><i class="el-icon-chat-dot-square"></i></span>
+                                                <span style="position: relative;right: -180px" v-if="reply.reply_from===user_name" @click="deleteReply(reply.reply_id)"><i class="el-icon-delete"></i></span>
+
+                                            </div>
+                                            <div class="talk-box">
+                                                <p>
+                                                    <span >回复 {{reply.reply_to}}:</span>
+                                                    <span class="reply">{{reply.reply_content}}</span>
+                                                </p>
+                                            </div>
+                                            <div class="reply-box">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div  v-show="_inputShow(index)" class="my-reply my-comment-reply">
+<!--                                        <el-avatar class="header-img" :size="40" :src="myHeader"></el-avatar>-->
+
+
+                                        <div class="reply-info" >
+                                            <el-input v-model="inputForm.text" placeholder="请输入回复"></el-input>
+<!--                                            <div tabindex="0" contenteditable="true" spellcheck="false" placeholder="输入评论..."   class="reply-input reply-comment-input"></div>-->
+                                        </div>
+                                        <div class=" reply-btn-box">
+                                            <el-button class="reply-btn" size="mini" @click="sendCommentReply(c.comment_id)" type="primary">发表回复</el-button>
+                                        </div>
+                                    </div>
+
+
                                 </td>
                             </tr>
                             </tbody>
@@ -280,6 +197,7 @@
 <script>
     export default {
         name: 'Forum_details',
+        inject:['reload'],
         data() {
             return {
                 queryInfo: {
@@ -292,29 +210,146 @@
                     id:0,
                     title : '',
                     username : '',
-                    content : ''
+                    content : '',
+                    user_img : '',
                 },
                 commentList:[],
-
+                inputForm:{
+                    text:'',
+                    from:'',
+                    to:'',
+                },
                 commentContent:'',
                 total: 0,
                 similarArticle:[],
-
+                user_name:'',
                 previewDialogVisible: false,
                 previewPath : "",
+                input:'',
+
+                btnShow: false,
+
+
             }
         },
         created() {
-            this.article.id = this.$route.params.articleid;
-            this.article.title = this.$route.params.articletitle;
-            this.article.username = this.$route.params.articleusername;
+            this.user_name = sessionStorage.getItem('user_name');
+            this.article.id = this.$route.query.articleid;
+            this.article.title = this.$route.query.articletitle;
+            this.article.username = this.$route.query.articleusername;
+            this.article.user_img = this.$route.query.articleuserimg;
             this.getArticleContent();
             this.getCommentList();
 
-           // this.user_name_article = sessionStorage.getItem('user_name');
             // console.log(this.managerRole);
         },
         methods: {
+            deleteComment(comment_id){
+                axios.get('/api/comment/deletecomment',{
+                    params:{
+                        comment_id : comment_id
+                    },
+                    headers:{
+                        'Authorization' :sessionStorage.getItem('token')
+                    }
+                }).then((response)=>{
+                    if (parseInt(response.data.code)===200){
+                        this.$message.success(response.data.msg)
+                        this.reload();
+                    }else   this.$message.error(response.data.msg)
+                }).catch(()=>{
+                    this.$message.error("发生错误")
+                })
+            },
+
+
+
+            openReplyBox(index){
+                if (this.commentList[index].comment_box_show===false && this.commentList[index].comment_reply_list.length!==0) this.commentList[index].comment_box_show=true;
+                else if (this.commentList[index].comment_box_show===false && this.commentList[index].comment_reply_list.length===0) this.$message.info("暂无回复");
+                else if (this.commentList[index].comment_box_show===true && this.commentList[index].comment_reply_list.length!==0)this.commentList[index].comment_box_show=false;
+
+            },
+            deleteReply(reply_id){
+                axios.get('/api/reply/deletereply',{
+                    params:{
+                        reply_id:reply_id
+                    },
+                    headers:{
+                        'Authorization' :sessionStorage.getItem('token')
+                    }
+                }).then((response)=>{
+                    if (parseInt(response.data.code)===200){
+                        this.$message.success(response.data.msg)
+                        this.reload();
+                    }else  this.$message.error(response.data.msg)
+                }).catch(()=>{
+                    this.$message.error("发生错误")
+                })
+            },
+            sendCommentReply(comment_id){
+                axios.post('/api/reply/addnewreply',JSON.stringify({
+                    reply_from : this.inputForm.from,
+                    reply_to : this.inputForm.to,
+                    reply_content : this.inputForm.text,
+                    reply_comment_id : comment_id
+                }),{
+                    headers:{
+                        'Authorization' : sessionStorage.getItem('token'),
+                        'Content-Type': 'application/json'
+                    }
+                }).then((response)=>{
+                    if (parseInt(response.data.code)===200){
+                        this.$message.success(response.data.msg);
+                        this.reload();
+
+                    }else this.$message.error(response.data.msg);
+                }).catch(()=>{
+                    this.$message.error("发生错误");
+                })
+            },
+            open(index,toName){
+                if (this.commentList[index].comment_input_show===false) this.commentList[index].comment_input_show = true;
+                else this.commentList[index].comment_input_show= false;
+                this.inputForm.to = toName;
+                this.inputForm.from = this.user_name
+
+            },
+
+            // inputFocus(){
+            //     var replyInput = document.getElementById('replyInput');
+            //     replyInput.style.padding= "8px 8px"
+            //     replyInput.style.border ="2px solid blue"
+            //     replyInput.focus()
+            // },
+            // showReplyBtn(){
+            //     this.btnShow = true
+            // },
+            // hideReplyBtn(){
+            //     this.btnShow = false
+            //     replyInput.style.padding= "10px"
+            //     replyInput.style.border ="none"
+            // },
+
+            showReplyInput(comment_index,reply_index,toName){
+
+                if (this.commentList[comment_index].comment_input_show===false) this.commentList[comment_index].comment_input_show = true;
+                else this.commentList[comment_index].comment_input_show = false;
+                this.inputForm.to = toName;
+                this.inputForm.from = this.user_name
+
+
+            },
+            _inputShow(i){
+                return this.commentList[i].comment_input_show;
+            },
+
+
+
+
+            goToUserHome(){
+                this.$router.push({path: 'user_home', query: {articleusername:this.article.username}})
+            },
             addNewComment(){
                 axios.post('/api/comment/addnewcomment',JSON.stringify({
                     comment_user_name: sessionStorage.getItem('user_name'),
@@ -355,7 +390,11 @@
             getCommentList(){
                 axios.get('/api/comment/queryallcomment',
                     {
-                        params:{ comment_article_id:  this.article.id  },
+                        params:{
+                            comment_article_id:  this.article.id,
+                            pagesize:this.queryInfo.pagesize,
+                            pagenum: this.queryInfo.pagenum
+                        },
                         headers: {
                             'Authorization': sessionStorage.getItem('token')}
 
@@ -379,12 +418,12 @@
             //监听pagesize改变的事件
             handleSizeChange(newSize) {
                 this.queryInfo.pagesize = newSize
-                this.getArticleList()
+                this.getCommentList()
             },
             //监听页码值改变的事件
             handleCurrentChange(newPage) {
                 this.queryInfo.pagenum = newPage
-                this.getArticleList()
+                this.getCommentList()
             },
 
         }
@@ -497,6 +536,19 @@
         vertical-align: inherit;
         border-color: inherit;
     }
+    /*.reply-box {*/
+    /*    margin: 10px 0 0 50px;*/
+    /*    background-color :#efefef*/
+
+
+    /*}*/
+    /*.talk-box{*/
+    /*    margin:0 50px;*/
+    /*}*/
+    /*.talk-box.reply{*/
+    /*    font-size :16px;*/
+    /*    color :#000*/
+    /*}*/
     .fuck {
         border-bottom: 1px solid #e2e2e2;
     }
@@ -561,4 +613,124 @@
     a {
         color: #000;
     }
+
+    .my-reply {
+        padding: 10px;
+        background-color: #fafbfc;
+    }
+    .my-reply .header-img {
+        display: inline-block;
+        vertical-align: top;
+    }
+    .my-reply .reply-info {
+        display: inline-block;
+        margin-left: 5px;
+        width: 90%;
+    }
+    @media screen and (max-width: 1200px) {
+        .my-reply .reply-info {
+            width: 80%;
+        }
+    }
+    .my-reply .reply-info .reply-input {
+        min-height: 20px;
+        line-height: 22px;
+        padding: 10px 10px;
+        color: #ccc;
+        background-color: #fff;
+        border-radius: 5px;
+    }
+    .my-reply .reply-info .reply-input:empty:before {
+        content: attr(placeholder);
+    }
+    .my-reply .reply-info .reply-input:focus:before {
+        content: none;
+    }
+    .my-reply .reply-info .reply-input:focus {
+        padding: 8px 8px;
+        border: 2px solid #00f;
+        box-shadow: none;
+        outline: none;
+    }
+    .my-reply .reply-btn-box {
+        height: 25px;
+        margin: 10px 0;
+    }
+    .my-reply .reply-btn-box .reply-btn {
+        position: relative;
+        float: right;
+        margin-right: 15px;
+    }
+    .my-comment-reply {
+        margin-left: 50px;
+    }
+    .my-comment-reply .reply-input {
+        width: flex;
+    }
+    .author-title:not(:last-child) {
+        border-bottom: 1px solid rgba(178,186,194,0.3);
+    }
+    .author-title {
+        padding: 10px;
+    }
+    .author-title .header-img {
+        display: inline-block;
+        vertical-align: top;
+    }
+    .author-title .author-info {
+        display: inline-block;
+        margin-left: 5px;
+        width: 60%;
+        height: 40px;
+        line-height: 20px;
+    }
+    .author-title .author-info >span {
+        display: block;
+        cursor: pointer;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .author-title .author-info .author-name {
+        color: #000;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .author-title .author-info .author-time {
+        font-size: 14px;
+    }
+    .author-title .icon-btn {
+        width: 30%;
+        padding: 0 !important;
+        float: right;
+    }
+    @media screen and (max-width: 1200px) {
+        .author-title .icon-btn {
+            width: 20%;
+            padding: 7px;
+        }
+    }
+    .author-title .icon-btn >span {
+        cursor: pointer;
+    }
+    .author-title .icon-btn .iconfont {
+        margin: 0 5px;
+    }
+    .author-title .talk-box {
+        margin: 0 50px;
+    }
+    .author-title .talk-box >p {
+        margin: 0;
+    }
+    .author-title .talk-box .reply {
+        font-size: 16px;
+        color: #000;
+    }
+    .author-title .reply-box {
+        margin: 10px 0 0 50px;
+        background-color: #efefef;
+    }
+
 </style>
+
+

@@ -20,4 +20,10 @@ public interface ArticleService {
 
     public int DeleteArticleLike(int like_article_id,String like_user_name);
 
+    public List<Article> GetAllArticleByUser(String article_user_name);
+
+    public List<Article> GetHotArticle();
+
+    public int UpdateArticleClick(int article_id);
+
 }

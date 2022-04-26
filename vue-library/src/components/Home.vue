@@ -5,8 +5,13 @@
 			<div>
 				<img src="../assets/logo.png" alt="" height="60">
 				<span>社区图书馆服务平台</span>
+
 			</div>
+
+
+			<el-button v-if="this.user_role==='user'" type="info" class="el-icon-user"  @click="goToUserHome">个人中心</el-button>
 			<el-button type="info" @click="logout">退出</el-button>
+
 		</el-header>
 		<!--页面主体-->
 		<el-container>
@@ -58,9 +63,12 @@
 					'150': 'iconfont el-icon-collection',
 					'151': 'iconfont el-icon-s-grid',
 					'152': 'el-icon-tickets',
+					'153': 'el-icon-user-solid',
+					'155' : 'el-icon-reading',
 
 				},
 				//是否折叠
+				user_name:'',
 				isCollapse: false,
 				//被激活的链接地址
 				activePath: '',
@@ -70,9 +78,12 @@
 			}
 		},
 		created() {
-
-			this.getMenuList()
 			this.activePath = window.sessionStorage.getItem('activePath')
+			this.user_name_special = window.sessionStorage.getItem('user_name');
+			this.user_role = sessionStorage.getItem('role');
+			this.getMenuList()
+
+			console.log(this.user_name)
 		},
 		methods: {
 			logout() {
@@ -91,7 +102,8 @@
 							"id": 150,
 							"authName": "图书借阅",
 							"path" :"books",
-							"children" :[{"id" : 151,"authName" : "图书检索与借阅", "path" : "books", "children" : [],"order": null}],
+							"children" :[{"id" : 151,"authName" : "图书检索与借阅", "path" : "books", "children" : [],"order": null},
+							 ],
 							"order": 2
 						},
 						 {
@@ -143,7 +155,8 @@
 						"id": 102,
 						"authName": "预约管理",
 						"path": "orders",
-						"children": [{"id": 107, "authName": "预约列表", "path": "appointment", "children": [], "order": null}],
+						"children": [{"id": 107, "authName": "书籍预约列表", "path": "appointment", "children": [], "order": 1}
+							],
 						"order": 4
 					},
 						{
@@ -160,6 +173,13 @@
 						"children": [{"id": 110, "authName": "用户列表", "path": "users", "children": [], "order": null}],
 						"order": 2
 					},
+						{
+							"id": 155,
+							"authName": "自习室管理",
+							"path": "seat_admin",
+							"children": [{"id": 155, "authName": "自习室列表", "path": "seat_admin", "children": [], "order": null}],
+							"order": 2
+						},
 						{
 						"id": 145,
 						"authName": "数据统计",
@@ -186,7 +206,10 @@
 			saveNavState(activePath) {
 				this.activePath = activePath
 				window.sessionStorage.setItem('activePath', activePath)
-			}
+			},
+			goToUserHome(){
+				this.$router.push({path: '/user_home', query: {articleusername:this.user_name_special}})
+			},
 		}
 	}
 </script>

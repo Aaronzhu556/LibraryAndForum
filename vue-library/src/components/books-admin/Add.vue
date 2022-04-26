@@ -4,59 +4,74 @@
 		<!--面包屑导航区-->
 		<el-breadcrumb separator-class="el-icon-arrow-right">
 			<el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-			<el-breadcrumb-item>商品管理</el-breadcrumb-item>
-			<el-breadcrumb-item>添加商品</el-breadcrumb-item>
+			<el-breadcrumb-item>书籍管理</el-breadcrumb-item>
+			<el-breadcrumb-item>添加书籍</el-breadcrumb-item>
 		</el-breadcrumb>
 
 		<el-card>
 			<!--提示信息-->
-			<el-alert title="添加商品信息" type="info" center show-icon :closable="false"></el-alert>
+			<el-alert title="添加书籍信息" type="info" center show-icon :closable="false"></el-alert>
 			<!--步骤条-->
 			<el-steps :space="200" :active="activeIndex - 0" finish-status="success" align-center>
 				<el-step title="基本信息"></el-step>
-				<el-step title="商品参数"></el-step>
-				<el-step title="商品属性"></el-step>
-				<el-step title="商品图片"></el-step>
-				<el-step title="商品内容"></el-step>
+<!--				<el-step title="商品参数"></el-step>-->
+<!--				<el-step title="商品属性"></el-step>-->
+				<el-step title="书籍图片"></el-step>
+				<el-step title="书籍内容"></el-step>
 				<el-step title="完成"></el-step>
 			</el-steps>
 			<!--tab标签栏-->
 			<el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px" label-position="top">
 				<el-tabs v-model="activeIndex" tab-position="left" :before-leave="beforeTabLeave">
 					<el-tab-pane label="基本信息" name="0">
-						<el-form-item label="商品名称" prop="product_name">
-							<el-input v-model="addForm.product_name"></el-input>
+						<el-form-item label="书籍名称" prop="book_name">
+							<el-input v-model="addForm.book_name"></el-input>
 						</el-form-item>
-						<el-form-item label="商品价格" prop="product_price">
-							<el-input v-model="addForm.product_price" type="money"></el-input>
+						<el-form-item label="书籍价格" prop="book_money">
+							<el-input v-model="addForm.book_money" type="money"></el-input>
 						</el-form-item>
-						<el-form-item label="商品数量" prop="product_num">
-							<el-input v-model="addForm.product_num" type="number"></el-input>
+						<el-form-item label="书籍ISBN" prop="book_isbn">
+							<el-input v-model="addForm.book_isbn" type="money"></el-input>
 						</el-form-item>
-						<el-form-item label="商品分类" prop="product_category_id">
-							<el-cascader v-model="addForm.product_category_id" :options="cateList" :props="cascaderProps" @change="handleChange" style="width: 300px"></el-cascader>
+						<el-form-item label="书籍出版社" prop="book_address">
+							<el-input v-model="addForm.book_address" ></el-input>
 						</el-form-item>
-					</el-tab-pane>
-					<el-tab-pane label="动态属性" name="1">
-						<el-form-item :label="item.property_name" v-for="(item,index) in manyTableData" :key="item.property_id">
-							<el-checkbox-group v-model="checkedManyTableData[index].property_detail">
-								<el-checkbox :label="cb" v-for="(cb,index) in item.property_detail" :key="index" border></el-checkbox>
-							</el-checkbox-group>
+						<el-form-item label="书籍作者" prop="book_author">
+							<el-input v-model="addForm.book_author" ></el-input>
 						</el-form-item>
-					</el-tab-pane>
-					<el-tab-pane label="静态属性" name="2">
-						<el-form-item :label="item.property_name" v-for="item in onlyTableData" :key="item.property_id">
-							<el-input v-model="item.property_detail"></el-input>
+
+						<el-form-item label="书籍分类" prop="book_category">
+							<el-cascader v-model="addForm.book_category" :options="cateList" :props="cascaderProps" @change="handleChange" style="width: 300px"></el-cascader>
 						</el-form-item>
 					</el-tab-pane>
-					<el-tab-pane label="商品图片" name="3">
-						<el-upload action="/api/product/upload_product_photo" :on-preview="handlePreview"
-						           :on-remove="handleRemove" list-type="picture" :headers="headerObj" :on-success="handleSuccess" name="product_photo">
+<!--					<el-tab-pane label="动态属性" name="1">-->
+<!--						<el-form-item :label="item.property_name" v-for="(item,index) in manyTableData" :key="item.property_id">-->
+<!--							<el-checkbox-group v-model="checkedManyTableData[index].property_detail">-->
+<!--								<el-checkbox :label="cb" v-for="(cb,index) in item.property_detail" :key="index" border></el-checkbox>-->
+<!--							</el-checkbox-group>-->
+<!--						</el-form-item>-->
+<!--					</el-tab-pane>-->
+<!--					<el-tab-pane label="静态属性" name="2">-->
+<!--						<el-form-item :label="item.property_name" v-for="item in onlyTableData" :key="item.property_id">-->
+<!--							<el-input v-model="item.property_detail"></el-input>-->
+<!--						</el-form-item>-->
+<!--					</el-tab-pane>-->
+					<el-tab-pane label="书籍图片" name="1">
+						<el-upload action="/api/book/uploadbookimg" :on-preview="handlePreview"
+						           :on-remove="handleRemove" list-type="picture" :headers="headerObj"  :limit="1" :on-success="handleSuccess" name="book_img">
 							<el-button type="primary">点击上传</el-button>
 						</el-upload>
 					</el-tab-pane>
-					<el-tab-pane label="商品内容" name="4">
-						<quill-editor v-model="addForm.product_context"></quill-editor>
+					<el-tab-pane label="书籍内容" name="2">
+<!--						<quill-editor v-model="addForm.book_context"></quill-editor>-->
+
+						<el-input
+								type="textarea"
+								:rows="10"
+								placeholder="请输入书籍简介"
+								v-model="addForm.book_context">
+						</el-input>
+
 						<el-button type="primary" class="btnAdd" @click="add">添加商品</el-button>
 					</el-tab-pane>
 				</el-tabs>
@@ -89,14 +104,14 @@
 				},
 				activeIndex: '0',
 				addForm: {
-					product_name: '',
-					product_price: 0,
-					product_num: 0,
-					product_category_id: [],
-					product_photo_list: [],
-					product_context: '',
-					property: [],
-					attribute : [],
+					book_name: '',
+					book_money: 0,
+					book_isbn: '',
+					book_address:'',
+					book_context: '',
+					book_category: [],
+					book_img:'',
+					book_author:'',
 				},
 				queryInfo:{
 					querytext:'',
@@ -104,19 +119,24 @@
 					pagesize:5
 				},
 				addFormRules: {
-					product_name: [
-						{required: true, message: '请输入商品名称', trigger: 'blur'}
+					book_name: [
+						{required: true, message: '请输入书籍名称', trigger: 'blur'}
 					],
-					product_price: [
-						{required: true, message: '请输入商品价格', trigger: 'blur'}
+					book_money: [
+						{required: true, message: '请输入书籍价格', trigger: 'blur'}
 					],
-
-					product_num: [
-						{required: true, message: '请输入商品数量', trigger: 'blur'}
+					book_address: [
+						{required: true, message: '请输入书籍出版社', trigger: 'blur'}
+							],
+					book_isbn: [
+						{required: true, message: '请输入书籍ISBN码', trigger: 'blur'}
 					],
-					product_category_id: [
-						{required: true, message: '请选择商品分类', trigger: 'blur'}
-					]
+					book_category: [
+						{required: true, message: '请选择书籍分类', trigger: 'blur'}
+					],
+					book_author: [
+						{required: true, message: '请输入书籍作者', trigger: 'blur'}
+					],
 				},
 				//供选择的商品参数列表
 				manyTableData: [],
@@ -142,9 +162,9 @@
 			//获取商品分类数据
 			getCateList() {
 				axios.post('/api/category/searchallcategory', JSON.stringify({
-					querytext:this.queryInfo.querytext,
-					pagenum:this.queryInfo.pagenum,
-					pagesize:this.queryInfo.pagesize,
+					querytext:'',
+					pagenum:1,
+					pagesize:1000,
 
 				}), {
 					headers: {
@@ -163,72 +183,14 @@
 				})
 			},
 			handleChange() {
-				if (this.addForm.product_category_id.length !== 3) {
-					this.addForm.product_category_id = []
+				if (this.addForm.book_category.length !== 2) {
+					this.addForm.book_category = []
 					return
 				}
-				//应该在选择商品分类时获取数据，如果在切换标签时获取，无法保存修改后的数据
-				//获取商品动态参数数据
-				axios.get(`/api/property/search_property_withoutparams`,
-						{
-							params:
-							{
-								property_category_id: this.addForm.product_category_id[2],
-								property_role :'many',
-							}
-						}).then(response =>
-				{
-
-					if (parseInt(response.data.code) === 200) {
-						response.data.object.forEach(item => {
-							item.property_detail = item.property_detail ? item.property_detail.split(',') : []
-						})
-						this.manyTableData = response.data.object;
-						//深拷贝一份manyTableData
-						this.checkedManyTableData = _.cloneDeep(response.data.object)
-					}
-					else if (parseInt(response.data.code)===201){
-						this.$message.info(response.data.msg);
-						this.manyTableData = [];
-					}
-					else {
-						this.$message.error(response.data.msg);
-						this.manyTableData = [];
-					}
-				}).catch(() => {
-					this.$message.error('请求失败')
-				})
-				//获取商品静态属性数据
-				axios.get(`/api/property/search_property_withoutparams`,
-						{
-							params:
-									{
-										property_category_id: this.addForm.product_category_id[2],
-										property_role :'only',
-									}
-						}).then(response =>
-				{
-
-					if (parseInt(response.data.code) === 200) {
-						this.onlyTableData = response.data.object;
-						//深拷贝一份manyTableData
-
-					}
-					else if (parseInt(response.data.code)===201){
-						this.$message.info(response.data.msg);
-						this.onlyTableData = [];
-					}
-					else {
-						this.$message.error(response.data.msg);
-						this.onlyTableData = [];
-					}
-				}).catch(() => {
-					this.$message.error('请求失败')
-				})
 			},
 			//阻止tab标签切换
 			beforeTabLeave(activeName, oldActiveName) {
-				if (oldActiveName === '0' && this.addForm.product_category_id.length !== 3) {
+				if (oldActiveName === '0' && this.addForm.book_category.length !== 2) {
 					this.$message.error('请选择商品分类')
 					return false
 				}
@@ -241,18 +203,21 @@
 			},
 			//移除图片
 			handleRemove(file) {
+				/*
 				const filePath = file.response.info;
 				const i = this.addForm.product_photo_list.findIndex(x => x.pic === filePath)
 				this.addForm.product_photo_list.splice(i, 1)
 				console.log(this.addForm.product_photo_list)
+				 */
+				this.addForm.book_img = '';
 			},
 			//图片上传成功hook
 			handleSuccess(res) {
 				console.log(res);
 				if (parseInt(res.code) === 200) {
 					this.$message.success(res.msg)
-					this.addForm.product_photo_list.push(res.info)
-					console.log(this.addForm.product_photo_list);
+					this.addForm.book_img = res.info
+					console.log(this.addForm.book_img);
 				} else {
 					this.$message.error(res.msg)
 				}
@@ -263,34 +228,19 @@
 					if (valid) {
 						//深拷贝一份form表单数据
 						const form = _.cloneDeep(this.addForm)
-						form.product_category_id = form.product_category_id[2];
-						//处理商品参数
-						this.checkedManyTableData.forEach(item => {
-							const newInfo = {
-								property_name: item.property_name,
-								property_detail: item.property_detail.join(',')
-							}
-							form.property.push(newInfo)
-						})
-						//处理商品属性
-						this.onlyTableData.forEach(item => {
-							const newInfo = {
-								property_name: item.property_name,
-								property_detail: item.property_detail
-							}
-							form.attribute.push(newInfo)
-						})
+						form.book_category = this.addForm.book_category[1];
+
+
 						console.log(form);
-						axios.post('/api/product/add_product', form,{
+						axios.post('/api/book/addbook', form,{
 							headers: {
 								'Content-Type': 'application/json',
 								'Authorization' : sessionStorage.getItem('token')
 							}
 						}).then(response => {
-
 							if (parseInt(response.data.code)=== 200) {
 								this.$message.success(response.data.msg)
-								this.$router.push('/goods')
+								this.$router.push('/books_admin')
 							} else {
 								this.$message.error(response.data.msg)
 							}
@@ -305,8 +255,8 @@
 		},
 		computed: {
 			cateId() {
-				if (this.addForm.product_category_id.length === 3) {
-					return this.addForm.product_category_id[2]
+				if (this.addForm.book_category.length === 2) {
+					return this.addForm.book_category[1]
 				}
 				return null
 			}

@@ -1,6 +1,7 @@
 package org.com.Service;
 
 import org.com.Entity.Borrow;
+import org.com.Entity.Comment;
 import org.com.Entity.User;
 import org.com.Mapper.BookMapper;
 import org.com.Mapper.BorrowMapper;
@@ -10,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class BorrowServiceImpl implements BorrowService {
@@ -44,6 +45,34 @@ public class BorrowServiceImpl implements BorrowService {
             if (i != 0) return "200";
             else return "202";
         }else return "201";
+    }
+    @Override
+    public int UpdateBookCommentInfo(String borrow_comment_context,int borrow_comment_star,int borrow_id){
+        SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        String borrow_comment_time = sdFormat.format(date.getTime()).toString();
+
+        return  borrowMapper.AddCommentBookInfo(borrow_comment_context, borrow_comment_time, borrow_comment_star,borrow_id);
+    }
+
+    @Override
+    public List<Borrow> QueryAllBorrowWithoutComment(String user_name){
+        List<Borrow> borrows = borrowMapper.QueryBorrowWithoutComment(user_name);
+        for (Borrow borrow:borrows){
+            String book_name = bookMapper.QueryBookName(borrow.getBorrow_book_id());
+            borrow.setBorrow_book_name(book_name);
+        }
+        return borrows;
+
+    }
+    @Override
+    public List<Borrow> QueryAllCommentById(int book_id){
+        List<Borrow> borrows = borrowMapper.QueryCommentById(book_id);
+        for (Borrow borrow:borrows){
+            borrow.setBorrow_user_img("/api"+userMapper.GetUserImgByName(borrow.getBorrow_user_name()));
+        }
+        return borrows;
+
     }
 
 }

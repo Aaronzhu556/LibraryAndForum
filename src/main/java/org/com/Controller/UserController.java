@@ -1,15 +1,18 @@
 package org.com.Controller;
+import org.com.Entity.Book;
+import org.com.Entity.QueryInfo;
 import org.com.Entity.User;
 import org.com.MyResponse.MyResponse;
 import org.com.Service.Interface.UserService;
 import org.com.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -41,4 +44,72 @@ public class UserController {
         if (code.equals("200")) return new MyResponse(code,"注册成功","",null,"");
         else return new MyResponse(code,"注册失败","",null,"");
     }
+
+    @ResponseBody
+    @RequestMapping("/uploadimg")
+    public MyResponse UploadUserImg(@RequestParam("user_img") MultipartFile multipartFile, @RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            String s = userService.UploadUserImg(multipartFile, JwtUtil.GetInformation(token));
+            if (s != null) return new MyResponse("200","上传头像成功",s,null,"");
+            else return new MyResponse("201","上传头像失败","",null,"");
+        }else return new MyResponse("202","Jwt验证失败","",null,"");
+    }
+
+    @ResponseBody
+    @RequestMapping("/queryuserimg")
+    public MyResponse QueryUserImg(@RequestParam String user_name,@RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            String userImg = userService.QueryUserImg(user_name);
+            return new MyResponse("200","查询成功",userImg,null,"");
+        }else  return new MyResponse("201","Jwt验证失败","",null,"");
+    }
+
+    @ResponseBody
+    @RequestMapping("/getallusername")
+    public MyResponse GetAllUserName(){
+        List<String> allUserName = userService.GetAllUserName();
+        return new MyResponse("200","查询成功","",allUserName,"");
+    }
+
+    @ResponseBody
+    @RequestMapping("/getalluser")
+    public MyResponse GetAllUser(@RequestBody QueryInfo queryInfo,@RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            List<User> users = userService.GetAllUser(queryInfo);
+            List<User> userList = new LinkedList<>();
+            int count=0;
+            for (int i = ((queryInfo.getPagenum() - 1) * queryInfo.getPagesize()); count < queryInfo.getPagesize(); i++) {
+                try {
+
+                    userList.add(users.get(i));
+                    count++;
+                } catch (Exception e) {
+                    break;
+                }
+            }
+            if (!userList.isEmpty()) return new MyResponse("200","查询成功",String.valueOf(users.size()),userList,"");
+            else return new MyResponse("201","暂无用户数据","",null,"");
+        }else return new MyResponse("202","Jwt验证失败","",null,"");
+    }
+
+    @ResponseBody
+    @RequestMapping("/changestatus")
+    public MyResponse ChangeStatus(@RequestParam int user_id,@RequestParam String user_status,@RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            int i = userService.ChangeUserStatus(user_id,user_status);
+            if (i!=0) return new MyResponse("200","修改用户状态成功","",null,"");
+            else return new MyResponse("201","修改用户状态失败","",null,"");
+        }else return new MyResponse("202","Jwt验证失败","",null,"");
+    }
+    @ResponseBody
+    @RequestMapping("/getallusernum")
+    public MyResponse GetAllUserNum(@RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            int i = userService.GetAllUserNum();
+            return new MyResponse("200","查询成功",String.valueOf(i),null,"");
+
+        }else return new MyResponse("201","Jwt验证失败","",null,"");
+    }
+
+
 }

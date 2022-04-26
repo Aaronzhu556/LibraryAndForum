@@ -11,6 +11,9 @@ import 'quill/dist/quill.core.css' // import styles
 import 'quill/dist/quill.snow.css' // for snow theme
 import 'quill/dist/quill.bubble.css' // for bubble theme
 
+
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
 //进度条
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'

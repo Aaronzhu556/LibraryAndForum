@@ -34,7 +34,7 @@
                                 <article class="media">
                                     <figure class="media-left">
                                         <p class="image is-64x64">
-                                            <img src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg" class="size" />
+                                            <el-avatar :src="article.article_user_img"></el-avatar>
                                         </p>
                                     </figure>
                                     <div class="media-content">
@@ -74,7 +74,7 @@
                                     </div>
                                     <div class="media-right">
                                         <a class="navbar-item" slot="trigger" role="button">
-                                            <b-button type="is-info" outlined @click="detail(article.article_id,article.article_title,article.article_user_name)">查看详情</b-button>
+                                            <b-button type="is-info" outlined @click="detail(article.article_id,article.article_title,article.article_user_name,article.article_user_img)">查看详情</b-button>
                                         </a>
                                     </div>
                                 </article>
@@ -96,11 +96,11 @@
                         <div class="card">
                             <header class="card-header">
                                 <div>
-                                    <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                                    <el-avatar :src="imageUrl"></el-avatar>
                                 </div>
                                 <p class="card-header-title"  >{{user_name_article}}</p>
-                                <p class="card-header-title"  >粉丝:50</p>
-                                <p class="card-header-title"  >发帖数量:5</p>
+                                <p class="card-header-title"  >粉丝:{{this.fans_num}}</p>
+                                <p class="card-header-title"  >发帖数量:{{this.article_user_num}}</p>
                             </header>
                             <div class="card-content">
                                 <div class="content">
@@ -169,7 +169,7 @@
                                         </el-tooltip>
 
 
-                                        <strong style="color: #C80000;float: right" >2000</strong>
+                                        <strong style="color: #C80000;float: right" >{{article.article_hot}}</strong>
 
                                         <br><br>
 
@@ -246,18 +246,79 @@
                 user_name_article:'',
 				previewDialogVisible: false,
 				previewPath : "",
+                fans_num:0,
+                article_user_num:0,
+                imageUrl:'',
 
 
 			}
 		},
 		created() {
-			this.getArticleList();
             this.user_name_article = sessionStorage.getItem('user_name');
+			this.getArticleList();
+			this.getUserFans();
+			this.queryUserImg();
+			this.getHotArticle();
+
+
 			// console.log(this.managerRole);
 		},
 		methods: {
+		    getHotArticle(){
+		        axios.get('/api/article/gethotarticle',{
+		            headers:{
+		                'Authorization' : sessionStorage.getItem('token')
+                    }
+                }).then(response=>{
+                    if (parseInt(response.data.code)===200){
+                        this.articleList_Hot = response.data.object;
+                        for (var i=0;i<this.articleList_Hot.length;i++){
+                            this.articleList_Hot[i].article_hot = this.articleList_Hot[i].article_hot.toFixed(2)
+                        }
+                        console.log(this.articleList_Hot )
+                        this.changeArticleTitle();
+                    }
+                })
+            },
+            queryUserImg(){
+                axios.get("/api/user/queryuserimg",{
+                    params:{
+                        user_name :  this.user_name_article
+                    },
+                    headers:{
+                        'Authorization' : sessionStorage.getItem('token')
+                    }
+                }).then((response)=>{
+                    if (parseInt(response.data.code)===200){
+                        this.imageUrl = "/api" + response.data.info;
+                        console.log(this.imageUrl)
+                    }
+                }).catch(()=>{
+                    this.$message.error("发生错误")
+                })
+
+
+            },
+            getUserFans(){
+                axios.get('/api/follow/getfans',{
+                    params:{
+                        follow_user_to:  this.user_name_article
+                    },
+                    headers:{
+                        'Authorization' : sessionStorage.getItem('token')
+                    }
+                }).then((response)=>{
+                    if (parseInt(response.data.code)===200){
+                       var list = response.data.object;
+                       this.fans_num = list.length;
+
+                    }
+                }).catch(()=>{
+                    this.$message.error("发生错误");
+                })
+            },
             CheckHotArticleDetail(current_data){
-                this.detail(current_data.article_id,current_data.article_title,current_data.article_user_name);
+                this.detail(current_data.article_id,current_data.article_title,current_data.article_user_name,current_data.article_user_img);
             },
 		    changeArticleTitle(){
 		        var i=0;
@@ -350,6 +411,10 @@
 				}).then(response => {
 					if (parseInt(response.data.code) === 200) {
 						this.articleList = response.data.object;
+						for (var i=0;i<this.articleList.length;i++){
+						    if (this.articleList[i].article_user_name===this.user_name_article) this.article_user_num++;
+                        }
+
 						this.queryInfo.querydata = this.queryInfo.querytext;
 						if (parseInt(response.data.page)===1){
 							this.queryInfo.pagenum = parseInt(response.data.page);
@@ -358,8 +423,8 @@
 						console.log("Hi 这里出错啦")
 						console.log(this.articleList)
 						this.total = parseInt(response.data.info);
-						this.articleList_Hot = this.articleList.slice(0,5);
-						this.changeArticleTitle();
+						//this.articleList_Hot = this.articleList.slice(0,5);
+						//this.changeArticleTitle();
 					} else {
 						this.$message.info(response.data.msg)
 					}
@@ -368,9 +433,22 @@
 					console.log(e);
 				})
 			},
-            detail(id,title,user_name) {
+            detail(id,title,user_name,user_img) {
+                axios.get('/api/article/addclicknum',{
+                    params:{
+                        article_id:id,
+                    },
+                    headers:{
+                        'Authorization' : sessionStorage.getItem('token')
+                    }
+                }).then(response=>{
 
-                this.$router.push({name: 'forum_details', params: {articleid: id, articletitle:title, articleusername:user_name}})
+                }).catch(()=>{
+                    this.$message.error("发生错误")
+                })
+
+
+                this.$router.push({path: '/forum_details', query: {articleid: id, articletitle:title, articleusername:user_name, articleuserimg:user_img}})
                 // this.$router.push({
                 //     path: '/forum_details',
                 //     query: {

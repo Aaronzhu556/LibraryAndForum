@@ -18,6 +18,7 @@
                        >
                 </el-option>
             </el-select>
+            <el-button style="float: right" @click="getAllSeats">刷新座位图</el-button>
             <div class="wrapper">
                 <div class="cinema-wrapper">
                     <h1 class="title">选择自习位置</h1>

@@ -21,6 +21,11 @@ import Forum_List from "../components/Forum/List-forum";
 import Forum_details from "../components/Forum/forum-details";
 import Forum_List_admin from "../components/forum-admin/List";
 import test from "../components/seats/test";
+import UserHome from"../components/user/UserHome";
+import BookDetails from "../components/books/Book_Details";
+import Appointment_seat from "../components/order/Appointment_seat";
+import Seat_Admin from "../components/seats/seat_admin";
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -94,7 +99,11 @@ const routes = [
 				component: Forum_List
 			},
 			{
-				path: '/forum_details/:articleid/:articletitle/:articleusername',
+				path: '/seat_admin',
+				component: Seat_Admin
+			},
+			{
+				path: '/forum_details',
 				name: 'forum_details',
 				component: Forum_details
 			},
@@ -107,12 +116,26 @@ const routes = [
 				component: test
 			},
 			{
+				path: "/appointment_seat",
+				component: Appointment_seat
+			},
+			{
+				path: '/user_home',
+				component: UserHome,
+				name: 'user_home'
+			},
+			{
 				path: '/orders',
 				component: Order
 			},
 			{
 				path: '/reports',
 				component: Report
+			},
+			{
+				path: '/book_details',
+				component: BookDetails,
+				name: 'bookdetails'
 			}
 		]
 	}
@@ -137,6 +160,8 @@ VueRouter.prototype.push = function(location) {
 	return originalPush.call(this, location).catch(err => err)
 }
 
+
+const whiteRouter=['/login','/register'];
 //挂载路由导航守卫
 router.beforeEach((to, from, next) => {
 	// to将要访问的路径
@@ -146,7 +171,13 @@ router.beforeEach((to, from, next) => {
 	if (to.path === '/login') return next()
 	//获取token
 	const tokenStr = window.sessionStorage.getItem('token')
-	if (!tokenStr) return next("/login")
+	if (!tokenStr) {
+		if (whiteRouter.indexOf(to.path)!==-1){
+			return next();
+		}
+
+		return next("/login")
+	}
 	next()
 })
 

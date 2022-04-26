@@ -60,8 +60,8 @@
 			},
 			goRegister(){
 				console.log("草拟吗");
-				//this.$router.push('/register').catch(err=>(console.log(err)));
-				this.$router.push('/register');
+				this.$router.push('/register').catch(err=>(console.log(err)));
+				//this.$router.replace('/register');
 			},
 			login() {
 				this.$refs.loginFormRef.validate(valid => {
@@ -155,7 +155,10 @@
 <style lang="less" scoped>
 	.login_container {
 		height: 100%;
-		background-color: #2b4b6b;
+
+		background: url("../assets/background.jpg") center center no-repeat;
+
+
 	}
 
 	.login_box {

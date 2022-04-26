@@ -19,13 +19,13 @@ public class CommentController {
 
     @RequestMapping("/queryallcomment")
     @ResponseBody
-    public MyResponse QueryAllComment(@RequestParam int comment_article_id, @RequestHeader("Authorization") String token) {
+    public MyResponse QueryAllComment(@RequestParam int comment_article_id,@RequestParam int pagesize,@RequestParam int pagenum, @RequestHeader("Authorization") String token) {
         if (JwtUtil.VerifyToken(token)) {
             List<Comment> comments = commentService.QueryAllComment(comment_article_id);
             List<Comment> commentList = new LinkedList<>();
             if (!comments.isEmpty()) {
                 int count = 0;
-                for (int i = 0; count < 8 && i < comments.size(); i++) {
+                for (int i = (pagenum-1)*pagesize; count < pagesize && i < comments.size(); i++) {
                     commentList.add(comments.get(i));
                     count++;
                 }
@@ -47,6 +47,17 @@ public class CommentController {
 
             if (flag!=0) return new MyResponse("200","回复成功","",null,"");
             else return new MyResponse("201","添加回复失败,请重试","",null,"");
+        }else return new MyResponse("202","Jwt验证失败","",null,"");
+    }
+
+
+    @RequestMapping("/deletecomment")
+    @ResponseBody
+    public MyResponse DeleteComment(@RequestParam int comment_id,@RequestHeader("Authorization")String token ){
+        if (JwtUtil.VerifyToken(token)){
+            int i = commentService.DeleteComment(comment_id);
+            if (i!=0) return new MyResponse("200","删除成功","",null,"");
+            else return new MyResponse("201","删除失败","",null,"");
         }else return new MyResponse("202","Jwt验证失败","",null,"");
     }
 }

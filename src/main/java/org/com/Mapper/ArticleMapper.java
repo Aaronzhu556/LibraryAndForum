@@ -43,4 +43,15 @@ public interface ArticleMapper {
 
     @Update("update t_article set article_reply_num=#{article_reply_num} where article_id=#{article_id}")
     public int UpdateArticleReplyNum(int article_reply_num,int article_id);
+
+    @Select("select * from t_article where article_user_name=#{article_user_name}")
+    public List<Article> GetAllArticleByUser(String article_user_name);
+
+    @Select("select article_click from t_article where article_id=#{article_id}")
+    public int GetArticleClick(int article_id);
+
+    @Update("update t_article set article_click=#{article_click} where article_id=#{article_id}")
+    public int UpdateArticleClick(int article_click,int article_id);
+
+
 }

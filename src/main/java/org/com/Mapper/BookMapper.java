@@ -1,9 +1,6 @@
 package org.com.Mapper;
 
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.com.Entity.Book;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,4 +21,19 @@ public interface BookMapper {
 
     @Delete("delete from t_book where book_id=#{book_id}")
     public int DeleteBook(int book_id);
+
+    @Select("select * from t_book where book_id=#{book_id}")
+    public Book GetAllBookByUser(int book_id);
+
+    @Insert("insert into t_book(book_name,book_img,book_isbn,book_money,book_category,book_address,book_context,book_author) values(#{book_name},#{book_img},#{book_isbn},#{book_money},#{book_category},#{book_address},#{book_context},#{book_author})")
+    public int AddBook(Book book);
+
+    @Select("select book_name from t_book where book_id=#{book_id}")
+    public String QueryBookName(int book_id);
+
+    @Select("select * from t_book where book_category=#{category_id}")
+    public List<Book> GetAllBookByCategory(int category_id);
+
+
+
 }

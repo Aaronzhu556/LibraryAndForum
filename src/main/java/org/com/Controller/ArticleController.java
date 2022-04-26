@@ -5,6 +5,7 @@ import org.com.Entity.Comment;
 import org.com.Entity.QueryInfo;
 import org.com.Mapper.CommentMapper;
 import org.com.Mapper.LikeMapper;
+import org.com.Mapper.UserMapper;
 import org.com.MyResponse.MyResponse;
 import org.com.Service.Interface.ArticleService;
 import org.com.util.JwtUtil;
@@ -24,6 +25,8 @@ public class ArticleController {
     private LikeMapper likeMapper;
     @Autowired
     private CommentMapper commentMapper;
+    @Autowired
+    private UserMapper userMapper;
     @ResponseBody
     @RequestMapping("/getallarticle")
     public MyResponse getALlArticle(@RequestBody QueryInfo queryInfo, @RequestHeader("Authorization") String token){
@@ -57,10 +60,12 @@ public class ArticleController {
                 }
                 List<Integer> Likelist = likeMapper.GetAllArticleLike(JwtUtil.GetInformation(token));
                 for (int i=0;i<ArticleList.size();i++) {
+                    ArticleList.get(i).setArticle_user_img("/api" + userMapper.GetUserImgByName(ArticleList.get(i).getArticle_user_name()));
                     if (Likelist.contains(ArticleList.get(i).getArticle_id())){
                         ArticleList.get(i).setArticle_user_like(true);
                     }else ArticleList.get(i).setArticle_user_like(false);
                 }
+
 //                for (int i=0;i<ArticleList.size();i++){
 //                    List<Comment> commentList = commentMapper.QueryAllCommentByArticleId(ArticleList.get(i).getArticle_id());
 //                    ArticleList.get(i).setArticle_reply_num(commentList.size());
@@ -118,4 +123,41 @@ public class ArticleController {
             else return new MyResponse("201","","",null,"");
         }else return new MyResponse("202","","",null,"");
     }
+
+    @ResponseBody
+    @RequestMapping("/getallarticlebyuser")
+    public MyResponse GetAllArticleByUser(@RequestParam String article_user_name,@RequestHeader("Authorization") String token){
+        if (JwtUtil.VerifyToken(token)){
+            List<Article> articles = articleService.GetAllArticleByUser(article_user_name);
+            List<Integer> Likelist = likeMapper.GetAllArticleLike(JwtUtil.GetInformation(token));
+            for (int i=0;i<articles.size();i++) {
+                if (Likelist.contains(articles.get(i).getArticle_id())){
+                    articles.get(i).setArticle_user_like(true);
+                }else articles.get(i).setArticle_user_like(false);
+            }
+
+            if (!articles.isEmpty()) return new MyResponse("200","查询成功","",articles,"");
+            else return new MyResponse("201","此用户还没有发帖","",null,"");
+        }else return new MyResponse("202","Jwt验证失败","",null,"");
+
+    }
+    @ResponseBody
+    @RequestMapping("/addclicknum")
+    public MyResponse AddClickNum(@RequestParam int article_id,@RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            int i = articleService.UpdateArticleClick(article_id);
+            return new MyResponse("200","记录成功","",null,"");
+        }else   return new MyResponse("201","Jwt验证失败","",null,"");
+    }
+
+    @ResponseBody
+    @RequestMapping("/gethotarticle")
+    public MyResponse GetHotArticle(@RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            List<Article> articles = articleService.GetHotArticle();
+            return new MyResponse("200","分析成功","",articles.subList(0,5),"");
+        }else  return new MyResponse("201","Jwt验证失败","",null,"");
+    }
+
+
 }

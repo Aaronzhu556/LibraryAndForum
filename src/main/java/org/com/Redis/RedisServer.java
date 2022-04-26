@@ -30,6 +30,7 @@ public class RedisServer {
         boolean flag = false;
         try{
             stringredisTemplate.delete(key);
+            System.out.println(getValue(key));
             flag = true;
         }catch (Exception e){
             System.out.println(e);

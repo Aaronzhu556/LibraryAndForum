@@ -39,8 +39,18 @@
                     callback();
                 }
             };
+            const validateUserName = (rule,value,callback) =>{
+                if (value===''){
+                    callback(new Error('请输入用户名'))
+                }else {
+                    for (var i = 0; i < this.allUserName.length; i++) {
+                        if (this.allUserName[i] === value) callback(new Error("该用户名已存在"))
+                        else callback();
+                    }
+                }
+            };
             return {
-
+                allUserName:[],
                 registerForm:{
                     user_name:'',
                     user_phone:'',
@@ -49,7 +59,7 @@
                 },
                 registerFormRules:{
                     user_name:[
-                        {required:true,message:'请输入用户名',trigger:'blur',max:10}
+                        {trigger:'blur',max:10,validator:validateUserName}
                     ],
                     user_phone: [
                         { required: true, message: '手机号不能为空', trigger: 'blur' },
@@ -66,7 +76,24 @@
 
             }
         },
+        created() {
+            this.getAllUserName();
+        },
         methods: {
+            getAllUserName(){
+
+
+                axios.get('/api/user/getallusername').then((response)=>{
+                    console.log(response)
+                    if (parseInt(response.data.code)===200){
+                        this.allUserName = response.data.object;
+                        console.log(this.allUserName)
+                    }
+                }).catch(()=>{
+                    this.$message.error("获取用户名失败")
+                })
+            },
+
             goLogin(){
                 this.$router.push('/login').catch(err=>(console.log(err)));
             },
@@ -114,6 +141,7 @@
     .register_container {
         height: 100%;
         background-color: #2b4b6b;
+        background: url("../assets/background.jpg") center center no-repeat;
     }
 
     .register_box {

@@ -19,9 +19,23 @@ public class User {
     private String user_status;
 
     private String user_book_num;
+    private String user_img;
+
+
+
+
     public User (){}
 
-    public User(@Length(max = 10) String user_name, String user_password, @NotNull @Length(max = 11) String user_phone,  String user_status,String user_book_num) {
+    public User(@Length(max = 10) String user_name, String user_password, @NotNull @Length(max = 11) String user_phone, String user_status, String user_book_num, String user_img) {
+        this.user_name = user_name;
+        this.user_password = user_password;
+        this.user_phone = user_phone;
+        this.user_status = user_status;
+        this.user_book_num = user_book_num;
+        this.user_img = user_img;
+    }
+
+    public User(@Length(max = 10) String user_name, String user_password, @NotNull @Length(max = 11) String user_phone, String user_status, String user_book_num) {
         this.user_name = user_name;
         this.user_password = user_password;
         this.user_phone = user_phone;

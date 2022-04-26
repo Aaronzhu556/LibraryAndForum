@@ -25,9 +25,14 @@
 			<el-table :data="userList" :border="true" :stripe="true">
 				<el-table-column label="序号" prop="user_id" width="50"></el-table-column>
 				<el-table-column label="用户名" prop="user_name"></el-table-column>
-				<el-table-column label="邮箱" prop="user_email"></el-table-column>
+				<el-table-column label="头像" scope>
+					<template slot-scope="scope">
+					<el-avatar :src="scope.row.user_img"></el-avatar>
+					</template>
+				</el-table-column>
 				<el-table-column label="电话" prop="user_phone"></el-table-column>
-<!--				<el-table-column label="头像" prop="user_logo"></el-table-column>-->
+				<el-table-column label="用户正借阅书籍数" prop="user_book_num"></el-table-column>
+
 <!--				<el-table-column label="用户余额" prop="user_money"></el-table-column>-->
 				<el-table-column label="状态" prop= "user_status" width="200">
 					<template slot-scope="scope">
@@ -50,7 +55,7 @@
 
 			<!--分页-->
 			<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="queryInfo.pagenum"
-			               :page-sizes="[1, 5, 10]" :page-size="queryInfo.pagesize" :total="total"
+			               :page-sizes="[4, 8, 16]" :page-size="queryInfo.pagesize" :total="total"
 			               layout="total, sizes, prev, pager, next, jumper" background>
 			</el-pagination>
 		</el-card>
@@ -126,27 +131,14 @@
 	export default {
 		name: "Users",
 		data() {
-			let checkEmail = (rule, value, callback) => {
-				const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
-				if (regEmail.test(value)) {
-					return callback()
-				}
-				callback(new Error('请输入合法的邮箱'))
-			}
-			let checkMobile = (rule, value, callback) => {
-				const regMobile = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/
-				if (regMobile.test(value)) {
-					return callback()
-				}
-				callback(new Error('请输入合法的手机号'))
-			}
+
 			return {
 				//获取用户列表的参数对象
 				queryInfo: {
 					querytext: '',
 					pagenum: 1,//当前的页数
-					pagesize: 5,//当前每页显示多少条数据
-					role:'customer'
+					pagesize: 4,//当前每页显示多少条数据
+
 				},
 				userList: [],
 				total: 0,
@@ -156,45 +148,9 @@
 				editDialogVisible: false,
 				//分配角色对话框的显示状态
 				setRoleDialogVisible: false,
-				//添加用户的表单数据
-				// addForm: {
-				// 	username: '',
-				// 	password: '',
-				// 	email: '',
-				// 	mobile: ''
-				// },
-				//添加用户表单的验证规则对象
-				addFormRules: {
-					username: [
-						{required: true, message: '请输入用户名', trigger: 'blur'},
-						{min: 3, max: 10, message: '用户名长度在3~10个字符', trigger: 'blur'}
-					],
-					password: [
-						{required: true, message: '请输入密码', trigger: 'blur'},
-						{min: 6, max: 15, message: '密码长度在6~15个字符', trigger: 'blur'}
-					],
-					email: [
-						{required: true, message: '请输入邮箱', trigger: 'blur'},
-						{validator: checkEmail, trigger: 'blur'}
-					],
-					mobile: [
-						{required: true, message: '请输入手机号', trigger: 'blur'},
-						{validator: checkMobile, trigger: 'blur'}
-					]
-				},
-				//修改用户的表单数据
-				editForm: {},
-				//修改用户表单的验证规则对象
-				editFormRules: {
-					email: [
-						{required: true, message: '请输入邮箱', trigger: 'blur'},
-						{validator: checkEmail, trigger: 'blur'}
-					],
-					mobile: [
-						{required: true, message: '请输入手机号', trigger: 'blur'},
-						{validator: checkMobile, trigger: 'blur'}
-					]
-				},
+
+
+
 				//需要被分配角色的用户信息
 				userInfo: {},
 				//所有角色的数据列表
@@ -208,11 +164,11 @@
 		},
 		methods: {
 			getUserList() {
-				axios.post('/api/user/searchalluser', JSON.stringify({
+				axios.post('/api/user/getalluser', JSON.stringify({
 					querytext:this.queryInfo.querytext,
 					pagenum:this.queryInfo.pagenum,
 					pagesize:this.queryInfo.pagesize,
-					//role:this.queryInfo.role,
+
 				}), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -221,6 +177,7 @@
 				}).then(response => {
 					if (parseInt(response.data.code) === 200) {
 						this.userList = response.data.object;
+						console.log(this.userList)
 						this.total = parseInt(response.data.info);
 					} else {
 						this.$message.info(response.data.msg)
@@ -230,10 +187,10 @@
 				})
 			},
 			changeSwitch(current_data,index){
-				axios.get('/api/user/update_status',
+				axios.get('/api/user/changestatus',
 						{
 							params:{
-								user_name : current_data.user_name,
+								user_id : current_data.user_id,
 								user_status : current_data.user_status
 							},
 							headers: {Authorization: sessionStorage.getItem('token')}

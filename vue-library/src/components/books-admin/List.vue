@@ -27,7 +27,7 @@
 				<el-table-column label="书籍名" prop="book_name"></el-table-column>
 				<el-table-column label="书籍图片" >
 					<template slot-scope="scope">
-						<el-button type="info" icon="el-icon-zoom-in" circle @click="PreviewPhoto(scope.row.product_photo_list)"></el-button>
+						<el-button type="info" icon="el-icon-zoom-in" circle @click="PreviewPhoto(scope.row.book_img)"></el-button>
 					</template>
 				</el-table-column>
 				<el-table-column label="书籍ISBN码" prop="book_isbn"></el-table-column>
@@ -134,8 +134,9 @@
 
 			 */
 			PreviewPhoto(current_data){
-				this.previewPath = "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png";
+				this.previewPath = "/api"+current_data;
 				this.previewDialogVisible = true;
+				console.log(this.previewPath)
 			},
 			deleteBooks(current_data){
 				axios.get('/api/book/deletebooks',{

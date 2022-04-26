@@ -11,6 +11,9 @@ public class Seat {
     private int seat_col;
     private String seat_name;
     private List<SeatInfo> seat_info;
+
+    private double seat_people_ratio;
+
     public Seat(){};
     public Seat(int seat_id, int seat_row, int seat_col,String seat_name) {
         this.seat_id = seat_id;

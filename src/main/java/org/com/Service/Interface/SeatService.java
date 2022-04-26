@@ -9,4 +9,13 @@ import java.util.List;
 public interface SeatService {
 
     public List<Seat> GetAllSeat();
+
+    public List<Seat> GetAllSeatByQuery();
+
+
+    public int DeleteSeat(int seat_id);
+
+    public int AddSeat(Seat seat);
+
+
 }
