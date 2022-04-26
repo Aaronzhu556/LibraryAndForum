@@ -180,13 +180,7 @@
 							"children": [{"id": 155, "authName": "自习室列表", "path": "seat_admin", "children": [], "order": null}],
 							"order": 2
 						},
-						{
-						"id": 145,
-						"authName": "数据统计",
-						"path": "reports",
-						"children": [{"id": 146, "authName": "数据报表", "path": "reports", "children": [], "order": null}],
-						"order": 5
-					}]
+					]
 				}
 				// axios.get('menus').then(response => {
 				// 	const res = response.data
