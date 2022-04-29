@@ -8,15 +8,9 @@
 
 		<el-card>
 			<el-carousel :interval="4000" type="card" height="200px">
-				<el-carousel-item v-for="(item,index) in personalBookList" :key="index">
+				<el-carousel-item v-for="(item,index) in showList" :key="index">
 					<div>
-						<img :src="item.book_img" class="image"style="height: 200px;width: 162px">
-						<div style="display:inline-block;float: right">
-							<span>
-								<strong>{{item.book_name}}</strong>
-							</span>
-
-						</div>
+						<img :src="item.img" class="image" >
 
 					</div>
 				</el-carousel-item>
@@ -138,6 +132,11 @@
 		name: "Welcome",
 		data(){
 			return {
+				showList:[
+					{id:0,img:require('../assets/1.jpg')},
+					{id:1,img:require('../assets/2.jpg')},
+					{id:2,img:require('../assets/3.jpg')}
+				],
 				personalBookList:[],
 				bookList:[],
 				role:'',

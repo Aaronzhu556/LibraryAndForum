@@ -162,6 +162,8 @@ public class ArticleController {
             return new MyResponse("200","分析成功","",articles.subList(0,5),"");
         }else  return new MyResponse("201","Jwt验证失败","",null,"");
     }
-
+//
+//    @ResponseBody
+//    @RequestMapping
 
 }

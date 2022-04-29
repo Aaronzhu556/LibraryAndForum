@@ -7,6 +7,7 @@
 <!--				<img src="../assets/avatar.jpg" alt="">-->
 <!--			</div>-->
 			<!--登录表单区域-->
+
 			<el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" class="login_form">
 				<el-form-item prop="name">
 					<el-input v-model="loginForm.name" prefix-icon="el-icon-user-solid"></el-input>
