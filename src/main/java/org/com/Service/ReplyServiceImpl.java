@@ -1,15 +1,18 @@
 package org.com.Service;
 
+import org.com.Entity.Article;
 import org.com.Entity.Reply;
 import org.com.Mapper.ArticleMapper;
 import org.com.Mapper.CommentMapper;
 import org.com.Mapper.ReplyMapper;
+import org.com.Mapper.UserMapper;
 import org.com.Service.Interface.ReplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class ReplyServiceImpl implements ReplyService {
@@ -19,6 +22,8 @@ public class ReplyServiceImpl implements ReplyService {
     private ArticleMapper articleMapper;
     @Autowired
     private CommentMapper commentMapper;
+    @Autowired
+    private UserMapper userMapper;
 
 
     @Override
@@ -45,6 +50,30 @@ public class ReplyServiceImpl implements ReplyService {
         replyNum = replyNum - 1;
         articleMapper.UpdateArticleReplyNum(replyNum,article_id);
         return replyMapper.DeleteReply(reply_id);
+
+    }
+
+    @Override
+    public List<Reply> GetAllUnReadReply(String user_name){
+        List<Reply> replies = replyMapper.GetAllUnReadReply(user_name);
+        for (Reply reply:replies){
+            reply.setReply_from_img("/api"+userMapper.GetUserImgByName(reply.getReply_from()));
+        }
+        return replies;
+    }
+
+    @Override
+    public Article ReadReply(int reply_id, int comment_id){
+
+        replyMapper.ReadReply("1",reply_id);
+        int article_id = commentMapper.GetCommentArticle_id(comment_id);
+        Article article = articleMapper.QueryArticleById(article_id);
+        article.setArticle_user_img("/api"+userMapper.GetUserImgByName(article.getArticle_user_name()));
+        return article;
+    }
+    @Override
+    public void ReadAllReply(List<Integer> replyIdList){
+        for (Integer integer:replyIdList) replyMapper.ReadReply("1",integer);
 
     }
 }

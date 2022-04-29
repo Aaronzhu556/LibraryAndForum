@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -152,9 +153,12 @@ public class ArticleController {
 
     @ResponseBody
     @RequestMapping("/gethotarticle")
-    public MyResponse GetHotArticle(@RequestHeader("Authorization")String token){
+    public MyResponse GetHotArticle(@RequestHeader("Authorization")String token) throws ParseException {
         if (JwtUtil.VerifyToken(token)){
             List<Article> articles = articleService.GetHotArticle();
+            for (Article article:articles){
+                article.setArticle_user_img("/api"+userMapper.GetUserImgByName(article.getArticle_user_name()));
+            }
             return new MyResponse("200","分析成功","",articles.subList(0,5),"");
         }else  return new MyResponse("201","Jwt验证失败","",null,"");
     }

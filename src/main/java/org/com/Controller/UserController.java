@@ -111,5 +111,12 @@ public class UserController {
         }else return new MyResponse("201","Jwt验证失败","",null,"");
     }
 
-
+    @ResponseBody
+    @RequestMapping("/gethotuser")
+    public MyResponse GetHotUser(@RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            List<User> userList = userService.GetHotUser();
+            return new MyResponse("200","获取成功","",userList.subList(0,4),"");
+        }else  return new MyResponse("201","Jwt验证失败","",null,"");
+    }
 }

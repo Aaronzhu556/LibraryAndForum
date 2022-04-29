@@ -55,6 +55,32 @@
 		<el-card>
 			<strong>活跃用户展示</strong>
 			<el-divider></el-divider>
+			<el-row>
+				<el-col :span="4" v-for="(user, index) in userHotList" :key="index" :offset="index > 0 ? 2 : 0">
+					<el-card :body-style="{ padding: '0px' }">
+<!--						<img :src="book.book_img" class="image"style="height: 162px;width: 162px">-->
+						<el-avatar :src="user.user_img" style="position: relative;left: 80px;top: 10px"></el-avatar>
+						<div style="padding: 14px;">
+							<div style="text-align: center"><span font-family="Helvetica Neu"  ><strong>{{user.user_name}}</strong></span></div>
+
+								<div style="text-align: center">
+								<span class="el-icon-document">发帖数:{{user.user_article_num}} </span>
+								</div>
+								<div style="text-align: center">
+								<span class="el-icon-star-off">获赞数:{{user.user_great}}</span>
+								</div>
+								<div style="text-align: center">
+								<span class="el-icon-more-outline">粉丝数:{{user.user_fans}}</span>
+								</div>
+
+							<div style="text-align: center">
+									<span class="el-icon-user"><el-link @click.native="goToUserDetail(user.user_name)">个人主页</el-link></span>
+<!--								<el-button  class="button" @click="goToBookDetails(book.book_id)">查看图书详情</el-button>-->
+							</div>
+						</div>
+					</el-card>
+				</el-col>
+			</el-row>
 		</el-card>
 
 	</div>
@@ -117,6 +143,7 @@
 				role:'',
 				bookNum:0,
 				userNum:0,
+				userHotList:[],
 				seatList:[],
 				userSeatRatio:0,
 				mychart_book_data_x:[],
@@ -210,7 +237,7 @@
 			this.getPersonalBook();
 			this.getHotBookForChart();
 			this.getSeatInfoData();
-
+			this.getHotUser()
 			this.getAllUserBookSeatNum();
 
 
@@ -219,6 +246,26 @@
 		},
 
 		methods:{
+			goToUserDetail(current_data){
+				this.$router.push({path: 'user_home', query: {articleusername:current_data}})
+			},
+			getHotUser(){
+				axios.get('/api/user/gethotuser',{
+					headers:{
+						'Authorization':sessionStorage.getItem('token')
+					}
+				}).then(response=>{
+					if (parseInt(response.data.code)===200){
+						this.userHotList = response.data.object;
+
+					}
+				}).catch(()=>{
+					this.$message.error("发生错误")
+				})
+			},
+
+
+
 			getAllUserBookSeatNum(){
 				axios.get("/api/user/getallusernum",{
 					headers:{
@@ -249,9 +296,11 @@
 						for (var i=0;i<this.seatList.length;i++){
 							temp = temp+this.seatList[i].seat_row * this.seatList[i].seat_col
 						}
-						var user_temp = this.mychart_seat_data_y[this.mychart_seat_data_y.length-1]
+						var user_temp=0;
+						for (var i=0;i<this.mychart_seat_data_y.length;i++) user_temp = user_temp + this.mychart_seat_data_y[i]
 
 						this.userSeatRatio = Math.round((user_temp/temp * 10000)/100.00)
+						console.log(user_temp)
 					}
 				})
 			},

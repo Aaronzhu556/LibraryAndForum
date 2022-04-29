@@ -16,7 +16,7 @@ public interface UserService {
     public List<User> GetAllUser(QueryInfo queryInfo);
     public int ChangeUserStatus(int user_id,String user_status);
     public int GetAllUserNum();
-
+    public List<User> GetHotUser();
 
 
 }

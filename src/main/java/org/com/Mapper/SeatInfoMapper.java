@@ -38,7 +38,7 @@ public interface SeatInfoMapper {
     @Delete("delete from t_seatinfo where seatinfo_parent=#{seat_id}")
     public int DeleteSeatinfoBySeatId(int seat_id);
 
-    @Select("select * from t_seatinfo")
+    @Select("select * from t_seatinfo where seatinfo_time is not null")
     public List<SeatInfo> GetAllSeatInfo();
 
 }

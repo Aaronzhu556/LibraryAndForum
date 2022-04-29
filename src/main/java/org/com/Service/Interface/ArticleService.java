@@ -4,6 +4,7 @@ import org.com.Entity.Article;
 import org.com.Entity.QueryInfo;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.List;
 
 @Service
@@ -22,7 +23,7 @@ public interface ArticleService {
 
     public List<Article> GetAllArticleByUser(String article_user_name);
 
-    public List<Article> GetHotArticle();
+    public List<Article> GetHotArticle() throws ParseException;
 
     public int UpdateArticleClick(int article_id);
 

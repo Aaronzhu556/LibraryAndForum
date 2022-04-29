@@ -21,6 +21,11 @@ public class User {
     private String user_book_num;
     private String user_img;
 
+    private int user_hot;
+    private int user_article_num;
+    private int user_fans;
+    private int user_great;
+
 
 
 

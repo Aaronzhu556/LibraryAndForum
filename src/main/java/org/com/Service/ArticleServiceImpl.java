@@ -7,6 +7,7 @@ import org.com.Service.Interface.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
@@ -95,7 +96,7 @@ public class ArticleServiceImpl implements ArticleService {
     * T是发帖到现在一共多少个小时    G是重力因子 取1.8
     * */
     @Override
-    public List<Article> GetHotArticle(){
+    public List<Article> GetHotArticle() throws ParseException {
         List<Article> articles = articleMapper.QueryAllArticle();
         List<Article> temp = articles.stream().collect(Collectors.toList());
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -105,8 +106,8 @@ public class ArticleServiceImpl implements ArticleService {
             int click=0,reply=0,like=0; //0.1  0.5   0.4
             int user_article_num=0,user_fans=0,user_like=0;//0.1   0.5   0.4
 
-            double W=0, I=0,G=1.8 ,T=0,H=0;
-
+            double W=0, I=0,G=1.8 ,H=0;
+            long T=0;
             W=article.getArticle_click()*2 + article.getArticle_reply_num()*5 + article.getArticle_star()*3;
             user_article_num = articleMapper.GetAllArticleByUser(article.getArticle_user_name()).size();
             user_fans = followMapper.GetUserFans(article.getArticle_user_name()).size();
@@ -115,18 +116,20 @@ public class ArticleServiceImpl implements ArticleService {
             }
             I = user_article_num+ user_fans*5+user_like*4;
 
-            ParsePosition position= new ParsePosition(0);
-            Date date_end = formatter.parse(article.getArticle_time(),position);
+            //ParsePosition position= new ParsePosition(0);
+            Date date_end = formatter.parse(article.getArticle_time());
             Date date_now = new Date();
 
             long diff = date_now.getTime() - date_end.getTime();
-            T=  diff % nd/nh;
 
+            T=  diff /nd;
+            System.out.println(diff);
+            System.out.println(T);
             H=(W+I)/Math.pow(T+1,G);
             article.setArticle_hot(H);
         }
         articles.sort(Comparator.comparing(Article::getArticle_hot).reversed());  //最后根据热度进行排序  用户的每一次点赞评论点击查看都会影响到热度
-       // System.out.println(articles.toString());
+        System.out.println(articles.toString());
         return articles;
 
     }

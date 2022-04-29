@@ -9,6 +9,7 @@ import org.com.Service.Interface.BookService;
 import org.com.Service.Interface.BorrowService;
 import org.com.Service.Interface.UserService;
 import org.com.util.JwtUtil;
+import org.com.util.PythonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ import java.util.List;
 public class BookController {
     @Autowired
     private BookService bookService;
-    private BorrowService borrowService;
+
 
 
     /*
@@ -178,6 +179,7 @@ public class BookController {
     public MyResponse GetNewBook(@RequestHeader("Authorization") String token){
         if (JwtUtil.VerifyToken(token)){
             List<Book> books = bookService.GetNewBook();
+            PythonUtils.recommend();
             return new MyResponse("200","查询成功",String.valueOf(books.size()),books,"");
         }else  return new MyResponse("201","Jwt验证失败","",null,"");
     }

@@ -25,6 +25,10 @@ import UserHome from"../components/user/UserHome";
 import BookDetails from "../components/books/Book_Details";
 import Appointment_seat from "../components/order/Appointment_seat";
 import Seat_Admin from "../components/seats/seat_admin";
+import Lost from  "../components/FindLost/Lost";
+import Lost_admin from "../components/FindLost/Lost_admin";
+import Find from "../components/FindLost/Find";
+import Find_admin from "../components/FindLost/Find_admin";
 
 Vue.use(VueRouter)
 
@@ -81,6 +85,22 @@ const routes = [
 			{
 				path: '/books_admin',
 				component: BooksList
+			},
+			{
+				path: '/find_admin',
+				component: Find_admin
+			},
+			{
+				path: '/find',
+				component: Find
+			},
+			{
+				path: '/lost',
+				component: Lost
+			},
+			{
+				path: '/lost_admin',
+				component : Lost_admin
 			},
 			{
 				path: '/books_admin/add',

@@ -24,4 +24,5 @@ public interface CommentMapper {
 
     @Select("select comment_article_id from t_comment where comment_id=#{comment_id}")
     public int GetCommentArticle_id(int comment_id);
+
 }

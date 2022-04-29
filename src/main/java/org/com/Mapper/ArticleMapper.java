@@ -12,7 +12,7 @@ public interface ArticleMapper {
     public List<Article> QueryAllArticle();
 
     @Select("select * from t_article where article_id=#{article_id}")
-    public Article QueryArticleById();
+    public Article QueryArticleById(int article_id);
 
     @Select("select * from t_article where article_title like '%' #{article_title} '%'")//SQL like模糊查询
     public List<Article> QueryArticleByTitle(String article_title);

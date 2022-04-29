@@ -65,7 +65,8 @@
 					'152': 'el-icon-tickets',
 					'153': 'el-icon-user-solid',
 					'155' : 'el-icon-reading',
-
+					'160' : 'el-icon-goods',
+					'161' : 'el-icon-s-release',
 				},
 				//是否折叠
 				user_name:'',
@@ -130,7 +131,25 @@
 							"order": 1
 						}],
 						"order": 3
-					}]
+					}, {
+							"id": 160,
+							"authName": "失物拾物",
+							"path": "lost",
+							"children": [{
+								"id": 160,
+								"authName": "拾物招领",
+								"path": "lost",
+								"children": [],
+								"order": 1
+							},{
+								"id": 161,
+								"authName": "失物信息",
+								"path": "find",
+								"children": [],
+								"order": 2
+							}],
+							"order": 3
+						}]
 				}
 				else if (role==="manager"){
 					this.menulist=[{
@@ -180,21 +199,18 @@
 							"children": [{"id": 155, "authName": "自习室列表", "path": "seat_admin", "children": [], "order": null}],
 							"order": 2
 						},
+						{
+							"id": 160,
+							"authName": "失物拾物管理",
+							"path": "lost_admin",
+							"children": [{"id": 155, "authName": "拾物列表", "path": "lost_admin", "children": [], "order": null},
+								{"id": 155, "authName": "失物登记列表", "path": "find_admin", "children": [], "order": null}],
+							"order": 2
+						},
+
 					]
 				}
-				// axios.get('menus').then(response => {
-				// 	const res = response.data
-				// 	if (res.meta.status === 200) {
-				// 		res.data.forEach(item => {
-				// 			this.defaultOpeneds.push('' + item.id)
-				// 		})
-				// 		this.menulist = res.data
-				// 	} else {
-				// 		this.$message.error(res.meta.msg)
-				// 	}
-				// }).catch(() => {
-				// 	this.$message.error("获取失败")
-				// })
+
 			},
 			//保存链接的激活状态
 			saveNavState(activePath) {

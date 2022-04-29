@@ -1,7 +1,10 @@
 package org.com.Service;
 
+import org.com.Entity.Article;
 import org.com.Entity.QueryInfo;
 import org.com.Entity.User;
+import org.com.Mapper.ArticleMapper;
+import org.com.Mapper.FollowMapper;
 import org.com.Mapper.UserMapper;
 import org.com.Service.Interface.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.com.util.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,6 +24,10 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Value("D:/graduateproject2photo/")
     private String imgPath;
+    @Autowired
+    private ArticleMapper articleMapper;
+    @Autowired
+    private FollowMapper followMapper;
 
     @Override
     public String UserLogin(String user_name, String user_password){
@@ -86,5 +95,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public int GetAllUserNum(){
         return userMapper.GetAllUser().size();
+    }
+    @Override
+    public List<User>GetHotUser(){
+        List<User> userList = userMapper.GetAllUser();
+        List<Article> articles = articleMapper.QueryAllArticle();
+        List<Article> temp = articles.stream().collect(Collectors.toList());
+        for (User user:userList){
+            int user_article_num = articleMapper.GetAllArticleByUser(user.getUser_name()).size();
+            int user_fans = followMapper.GetUserFans(user.getUser_name()).size();
+            int user_like=0;
+            for (int i=0;i<temp.size();i++){
+                if (temp.get(i).getArticle_user_name()==user.getUser_name()) user_like = user_like +1;
+            }
+            user.setUser_hot(user_article_num+user_fans+user_like);
+            user.setUser_img("/api"+user.getUser_img());
+            user.setUser_fans(user_fans);
+            user.setUser_great(user_like);
+            user.setUser_article_num(user_article_num);
+        }
+        userList.sort(Comparator.comparing(User::getUser_hot).reversed());
+        return userList;
     }
 }
