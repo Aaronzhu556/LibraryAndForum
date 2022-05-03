@@ -67,6 +67,7 @@
 					'155' : 'el-icon-reading',
 					'160' : 'el-icon-goods',
 					'161' : 'el-icon-s-release',
+					'162' : 'el-icon-s-platform',
 				},
 				//是否折叠
 				user_name:'',
@@ -205,6 +206,14 @@
 							"path": "lost_admin",
 							"children": [{"id": 155, "authName": "拾物列表", "path": "lost_admin", "children": [], "order": null},
 								{"id": 155, "authName": "失物登记列表", "path": "find_admin", "children": [], "order": null}],
+							"order": 2
+						},
+						{
+							"id": 162,
+							"authName": "公告管理",
+							"path": "notice_admin",
+							"children": [{"id": 155, "authName": "公告列表", "path": "notice_admin", "children": [], "order": null},
+						],
 							"order": 2
 						},
 

@@ -29,7 +29,7 @@ import Lost from  "../components/FindLost/Lost";
 import Lost_admin from "../components/FindLost/Lost_admin";
 import Find from "../components/FindLost/Find";
 import Find_admin from "../components/FindLost/Find_admin";
-
+import Notice_admin from "../components/Notice/NoticeList";
 Vue.use(VueRouter)
 
 const routes = [
@@ -101,6 +101,10 @@ const routes = [
 			{
 				path: '/lost_admin',
 				component : Lost_admin
+			},
+			{
+				path: '/notice_admin',
+				component: Notice_admin
 			},
 			{
 				path: '/books_admin/add',

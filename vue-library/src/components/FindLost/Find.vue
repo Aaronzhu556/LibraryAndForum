@@ -58,8 +58,8 @@
                 <el-descriptions-item label="失物时间">{{this.findData[3]}}</el-descriptions-item>
 
                 <el-descriptions-item label="状  态">
-                    <el-tag size="small" type="success" v-if="this.findData[4]=='0'">无人认领</el-tag>
-                    <el-tag size="small" type="danger" v-else-if="this.findData[4]=='1'" >已被认领</el-tag>
+                    <el-tag size="small" type="success" v-if="this.findData[4]=='0'">未找到</el-tag>
+                    <el-tag size="small" type="danger" v-else-if="this.findData[4]=='1'" >已找到</el-tag>
 
                 </el-descriptions-item>
 

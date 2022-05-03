@@ -7,6 +7,16 @@
 
 
 		<el-card>
+			<div v-if="this.textArr.length !==0">
+				<div class="textBox">
+					<transition name="slide">
+						<p class="text" :key="text.id">
+							<el-tag type="warning">{{text.val.notice_title}}</el-tag>
+							{{text.val.notice_content}}</p>
+					</transition>
+				</div>
+			</div>
+			<el-divider></el-divider>
 			<el-carousel :interval="4000" type="card" height="200px">
 				<el-carousel-item v-for="(item,index) in showList" :key="index">
 					<div>
@@ -132,6 +142,13 @@
 		name: "Welcome",
 		data(){
 			return {
+				queryInfo: {
+					querytext: '',
+					pagenum: 1,
+					pagesize: 8,
+					querydata:'',
+
+				},
 				showList:[
 					{id:0,img:require('../assets/1.jpg')},
 					{id:1,img:require('../assets/2.jpg')},
@@ -226,25 +243,57 @@
 
 						}
 					]
-				}
+				},
+				textArr: [],
+				number: 0
 
+			}
+		},
+		computed: {
+			text () {
+				return {
+					id: this.number,
+					val: this.textArr[this.number]
+				}
 			}
 		},
 		created(){
 			this.role = sessionStorage.getItem('role');
-			console.log(this.role)
 			this.getPersonalBook();
 			this.getHotBookForChart();
 			this.getSeatInfoData();
 			this.getHotUser()
 			this.getAllUserBookSeatNum();
-
-
-
-
+			this.getAllNotice();
 		},
 
 		methods:{
+			getAllNotice(){
+				axios.post("/api/notice/getallnotice",JSON.stringify(this.queryInfo),{
+					headers:{
+						'Authorization' :sessionStorage.getItem('token'),
+						'Content-Type' : 'application/json'
+					}
+				}).then(response=>{
+					if (parseInt(response.data.code)===200){
+						this.textArr = response.data.object;
+						console.log(	this.textArr)
+					}
+				}).catch(()=>{
+					this.$message.error("发生错误")
+				})
+			},
+			startMove () {
+				// eslint-disable-next-line
+				let timer = setTimeout(() => {
+					if (this.number === this.textArr.length) {
+						this.number = 0;
+					} else {
+						this.number += 1;
+					}
+					this.startMove();
+				}, 2500); // 滚动不需要停顿则将2000改成动画持续时间
+			},
 			goToUserDetail(current_data){
 				this.$router.push({path: 'user_home', query: {articleusername:current_data}})
 			},
@@ -430,6 +479,7 @@
 
 		},
 		mounted(){
+			this.startMove();
 			this.$nextTick(()=>{
 				this.initBookChart();
 				this.initSeatChart();
@@ -514,3 +564,30 @@
 	}
 </style>
 
+
+<style scoped>
+	.textBox {
+		width: 100%;
+		height: 40px;
+		margin: 0 auto;
+		overflow: hidden;
+		position: relative;
+		text-align: center;
+	}
+	.text {
+		width: 100%;
+		position: absolute;
+		bottom: 0;
+	}
+	.slide-enter-active, .slide-leave-active {
+		transition: all 0.5s linear;
+	}
+	.slide-enter{
+		transform: translateY(20px) scale(1);
+		opacity: 1;
+	}
+	.slide-leave-to {
+		transform: translateY(-20px) scale(0.8);
+		opacity: 0;
+	}
+</style>

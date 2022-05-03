@@ -93,7 +93,7 @@ public class ArticleServiceImpl implements ArticleService {
     * W是帖子的热度，由用户的点赞、评论、查看加权计算得出。我取的权重分别是5 3 2
     * I是发帖人的热度   由发帖数和粉丝和用户所获得的点赞数加权得出  权重是1 5  4
     *
-    * T是发帖到现在一共多少个小时    G是重力因子 取1.8
+    * T是发帖到现在一共多少天    G是重力因子 取1.8
     * */
     @Override
     public List<Article> GetHotArticle() throws ParseException {

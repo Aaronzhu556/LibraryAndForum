@@ -179,7 +179,7 @@ public class BookController {
     public MyResponse GetNewBook(@RequestHeader("Authorization") String token){
         if (JwtUtil.VerifyToken(token)){
             List<Book> books = bookService.GetNewBook();
-            PythonUtils.recommend();
+            PythonUtils.recommendBook();
             return new MyResponse("200","查询成功",String.valueOf(books.size()),books,"");
         }else  return new MyResponse("201","Jwt验证失败","",null,"");
     }
