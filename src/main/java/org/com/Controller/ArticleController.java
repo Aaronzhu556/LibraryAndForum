@@ -33,46 +33,18 @@ public class ArticleController {
     public MyResponse getALlArticle(@RequestBody QueryInfo queryInfo, @RequestHeader("Authorization") String token){
         if (JwtUtil.VerifyToken(token)){
             List<Article> allArticle = articleService.getAllArticle(queryInfo);
-            List<Article> ArticleList = new LinkedList<>();
+         //   List<Article> ArticleList = new LinkedList<>();
             int page = 0;
             if (!allArticle.isEmpty()){
 
-                int count = 0;
-                if (!queryInfo.getQuerydata().equals(queryInfo.getQuerytext())&&queryInfo.getPagenum()!=1) {
-                    for (int i = 0; count < queryInfo.getPagesize(); i++) {
-                        try {
-                            ArticleList.add(allArticle.get(i));
-                            count++;
-                        } catch (Exception e) {
-                            break;
-                        }
-                    }
-                    page = 1;
-                }else {
-                    for (int i = ((queryInfo.getPagenum() - 1) * queryInfo.getPagesize()); count < queryInfo.getPagesize(); i++) {
-                        try {
-                            System.out.println("caocao coaocoao");
-                            ArticleList.add(allArticle.get(i));
-                            count++;
-                        } catch (Exception e) {
-                            break;
-                        }
-                    }
-                }
                 List<Integer> Likelist = likeMapper.GetAllArticleLike(JwtUtil.GetInformation(token));
-                for (int i=0;i<ArticleList.size();i++) {
-                    ArticleList.get(i).setArticle_user_img("/api" + userMapper.GetUserImgByName(ArticleList.get(i).getArticle_user_name()));
-                    if (Likelist.contains(ArticleList.get(i).getArticle_id())){
-                        ArticleList.get(i).setArticle_user_like(true);
-                    }else ArticleList.get(i).setArticle_user_like(false);
+                for (int i=0;i<allArticle.size();i++) {
+                    allArticle.get(i).setArticle_user_img(userMapper.GetUserImgByName(allArticle.get(i).getArticle_user_name()));
+                    if (Likelist.contains(allArticle.get(i).getArticle_id())){
+                        allArticle.get(i).setArticle_user_like(true);
+                    }else allArticle.get(i).setArticle_user_like(false);
                 }
-
-//                for (int i=0;i<ArticleList.size();i++){
-//                    List<Comment> commentList = commentMapper.QueryAllCommentByArticleId(ArticleList.get(i).getArticle_id());
-//                    ArticleList.get(i).setArticle_reply_num(commentList.size());
-//                }
-
-                return new MyResponse("200","查询成功",String.valueOf(allArticle.size()),ArticleList,String.valueOf(page));
+                return new MyResponse("200","查询成功",String.valueOf(allArticle.size()),allArticle,String.valueOf(page));
             }else return new MyResponse("201","没有您搜索的信息~","",null,"");
         }else return new MyResponse("202","JWt验证失败","",null,"");
     }

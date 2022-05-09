@@ -27,65 +27,16 @@ public class BookController {
     private BookService bookService;
 
 
-
-    /*
-    @ResponseBody
-    @RequestMapping("/querybooks")
-
-
-    public MyResponse QueryBooksAll(@RequestBody QueryInfo queryInfo,@RequestHeader("Authorization") String  token){
-
-        int count = 0;
-        if (JwtUtil.VerifyToken(token)){//JWT验证
-            List<Book> bookList = new LinkedList<>();
-            List<Book> books = bookService.QueryBookAll();
-
-            for (int i=((queryInfo.getPagenum()-1)*queryInfo.getPagesize());count<queryInfo.getPagesize()&&i<books.size();i++){
-                bookList.add(books.get(i));
-                count++;
-            }
-            return new MyResponse("200","查询成功",String.valueOf(books.size()),bookList);
-        }else return new MyResponse("201","JWT验证失败","",null);
-
-    }
-
-
-     */
-
     @ResponseBody
     @RequestMapping("/querybooks")
     public MyResponse QueryBookAll(@RequestBody QueryInfo queryInfo,@RequestHeader("Authorization") String  token){
         if (JwtUtil.VerifyToken(token)){
 
             List<Book> books = bookService.QueryBook(queryInfo);
-            List<Book> bookList = new LinkedList<>();
+
             int page = 0;
             if (!books.isEmpty()){
-
-                int count = 0;
-                if (!queryInfo.getQuerydata().equals(queryInfo.getQuerytext())&&queryInfo.getPagenum()!=1) { // 说明这是第一次查询
-                    for (int i = 0; count < queryInfo.getPagesize(); i++) {
-                        try {
-                            bookList.add(books.get(i));
-                            count++;
-                        } catch (Exception e) {
-                            break;
-                        }
-                    }
-                    page = 1;
-                }else {
-                    for (int i = ((queryInfo.getPagenum() - 1) * queryInfo.getPagesize()); count < queryInfo.getPagesize(); i++) {
-                        try {
-
-                            bookList.add(books.get(i));
-                            count++;
-                        } catch (Exception e) {
-                            break;
-                        }
-                    }
-                }
-                System.out.println(bookList.toString());
-                return new MyResponse("200","查询成功",String.valueOf(books.size()),bookList,String.valueOf(page));
+                return new MyResponse("200","查询成功",String.valueOf(books.size()),books,String.valueOf(page));
             }else return new MyResponse("201","没有这本书,请联系管理员~","",null,"");
 
         }else return new MyResponse("202","JWt验证失败","",null,"");
@@ -200,18 +151,8 @@ public class BookController {
     public MyResponse GetBookByBorrow(@RequestBody QueryInfo queryInfo,@RequestHeader("Authorization")String token){
         if (JwtUtil.VerifyToken(token)){
             List<Book> books = bookService.GetAllBookByBorrow();
-            List<Book> bookList = new LinkedList<>();
-            int count=0;
-            for (int i = ((queryInfo.getPagenum() - 1) * queryInfo.getPagesize()); count < queryInfo.getPagesize(); i++) {
-                try {
 
-                    bookList.add(books.get(i));
-                    count++;
-                } catch (Exception e) {
-                    break;
-                }
-            }
-            if (!bookList.isEmpty()) return new MyResponse("200","查询成功",String.valueOf(books.size()),bookList,"");
+            if (!books.isEmpty()) return new MyResponse("200","查询成功",String.valueOf(books.size()),books,"");
             else return new MyResponse("201","暂无数据","",null,"");
         }else return new MyResponse("202","Jwt验证失败","",null,"");
     }
@@ -220,18 +161,8 @@ public class BookController {
     public MyResponse GetBookByStar(@RequestBody QueryInfo queryInfo,@RequestHeader("Authorization")String token){
         if (JwtUtil.VerifyToken(token)){
             List<Book> books = bookService.GetAllBookByStar();
-            List<Book> bookList = new LinkedList<>();
-            int count=0;
-            for (int i = ((queryInfo.getPagenum() - 1) * queryInfo.getPagesize()); count < queryInfo.getPagesize(); i++) {
-                try {
 
-                    bookList.add(books.get(i));
-                    count++;
-                } catch (Exception e) {
-                    break;
-                }
-            }
-            if (!bookList.isEmpty()) return new MyResponse("200","查询成功",String.valueOf(books.size()),bookList,"");
+            if (!books.isEmpty()) return new MyResponse("200","查询成功",String.valueOf(books.size()),books,"");
             else return new MyResponse("201","暂无数据", "",null,"");
         }else return new MyResponse("202","Jwt验证失败","",null,"");
     }
@@ -241,18 +172,7 @@ public class BookController {
     public MyResponse GetAllBookByTime(@RequestBody QueryInfo queryInfo,@RequestHeader("Authorization")String token){
         if (JwtUtil.VerifyToken(token)){
             List<Book> books = bookService.GetAllBookByTime();
-            List<Book> bookList = new LinkedList<>();
-            int count=0;
-            for (int i = ((queryInfo.getPagenum() - 1) * queryInfo.getPagesize()); count < queryInfo.getPagesize(); i++) {
-                try {
-
-                    bookList.add(books.get(i));
-                    count++;
-                } catch (Exception e) {
-                    break;
-                }
-            }
-            if (!bookList.isEmpty()) return new MyResponse("200","查询成功",String.valueOf(books.size()),bookList,"");
+            if (!books.isEmpty()) return new MyResponse("200","查询成功",String.valueOf(books.size()),books,"");
             else return new MyResponse("201","暂无数据", "",null,"");
         }else return new MyResponse("202","Jwt验证失败", "",null,"");
     }

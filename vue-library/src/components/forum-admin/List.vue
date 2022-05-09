@@ -62,6 +62,9 @@
                     querydata:'',
                 },
                 articleList_admin: [],
+                totalArticleList_admin:[[]],
+                articles:[],
+                max_page:0,
                 total: 0,
                 previewDialogVisible: false,
                 previewPath : "",
@@ -73,7 +76,16 @@
             console.log(this.managerRole);
         },
         methods: {
+            resetAllData(){
+                this.queryInfo.pagenum = 1;
+                this.articleList_admin = [];
+                this.totalArticleList_admin =[[]];
+                this.articles=[];
+                this.max_page=0;
+                this.total= 0;
+            },
             getArticleList(){
+                this.resetAllData();
                 axios.post('/api/article/getallarticle',JSON.stringify({
                     querytext:this.queryInfo.querytext,
                     pagenum:this.queryInfo.pagenum,
@@ -87,13 +99,17 @@
 
                 }).then(response => {
                     if (parseInt(response.data.code) === 200) {
-                        this.articleList_admin = response.data.object;
-                        this.queryInfo.querydata = this.queryInfo.querytext;
-                        if (parseInt(response.data.page)===1){
-                            this.queryInfo.pagenum = parseInt(response.data.page);
+                        this.articles = response.data.object;
+                        this.max_page = Math.ceil(this.articles.length / this.queryInfo.pagesize) || 1;
+                        for (let i = 0; i < this.max_page; i++) {
+                            this.totalArticleList_admin[i] = this.articles.slice(
+                                this.queryInfo.pagesize * i,
+                                this.queryInfo.pagesize * (i + 1)
+                            );
+                            console.log(this.totalArticleList_admin[i]);
                         }
-                        console.log("Hi 这里出错啦")
-                        console.log(this.bookList)
+                        this.articleList_admin = this.totalArticleList_admin[this.queryInfo.pagenum-1];
+
                         this.total = parseInt(response.data.info);
                     } else {
                         this.$message.info(response.data.msg)
@@ -103,21 +119,7 @@
                     console.log(e);
                 })
             },
-            /*
-            *预览图片 懒加载模式
-            * */
-            /*
-            PreviewPhoto(current_data){
-                this.product_photos = current_data;
-                console.log(this.product_photos)
-                for (var i=0;i<this.product_photos.length;i++){
-                    this.product_photos[i] = "/api" + this.product_photos[i];
-                }
-                console.log(this.product_photos);
-                this.previewDialogVisible = true;
-            },
 
-             */
             PreviewPhoto(current_data){
                 this.previewPath = "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png";
                 this.previewDialogVisible = true;
@@ -163,7 +165,8 @@
             //监听页码值改变的事件
             handleCurrentChange(newPage) {
                 this.queryInfo.pagenum = newPage
-                this.getArticleList()
+                //this.getArticleList()
+                this.articleList_admin = this.totalArticleList_admin[newPage-1];
             },
 
             goAddPage(){

@@ -25,18 +25,7 @@ public class NoticeController {
     public MyResponse GetAllNotice(@RequestBody QueryInfo queryInfo, @RequestHeader("Authorization")String token){
         if (JwtUtil.VerifyToken(token)){
             List<Notice> notices = noticeService.GetAllNotice(queryInfo);
-            List<Notice> noticeList = new LinkedList<>();
-            int count=0;
-            for (int i = ((queryInfo.getPagenum() - 1) * queryInfo.getPagesize()); count < queryInfo.getPagesize(); i++) {
-                try {
-
-                    noticeList.add(notices.get(i));
-                    count++;
-                } catch (Exception e) {
-                    break;
-                }
-            }
-            return new MyResponse("200","查询成功",String.valueOf(notices.size()),noticeList,"");
+            return new MyResponse("200","查询成功",String.valueOf(notices.size()),notices,"");
         }
         else  return new MyResponse("201","Jwt验证失败","",null,"");
     }

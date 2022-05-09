@@ -87,6 +87,11 @@
                     querydata:'',
                 },
                 class_seat: [],
+                classs :[],
+                totalclass_seat:[[]],
+
+                max_page:0,
+
                 seatForm:{
                     seat_name:'',
                     seat_row:'',
@@ -155,11 +160,16 @@
 
                 }).then(response => {
                     if (parseInt(response.data.code) === 200) {
-                        this.class_seat = response.data.object;
-                        // this.queryInfo.querydata = this.queryInfo.querytext;
-                        // if (parseInt(response.data.page)===1){
-                        //     this.queryInfo.pagenum = parseInt(response.data.page);
-                        // }
+                        this.classs = response.data.object;
+                        this.max_page = Math.ceil(this.classs.length / this.queryInfo.pagesize) || 1;
+                        for (let i = 0; i < this.max_page; i++) {
+                            this.totalclass_seat[i] = this.classs.slice(
+                                this.queryInfo.pagesize * i,
+                                this.queryInfo.pagesize * (i + 1)
+                            );
+                            console.log(this.totalclass_seat[i]);
+                        }
+                        this.class_seat = this.totalclass_seat[this.queryInfo.pagenum-1];
 
                         this.total = parseInt(response.data.info);
                     } else {
@@ -199,7 +209,8 @@
             //监听页码值改变的事件
             handleCurrentChange(newPage) {
                 this.queryInfo.pagenum = newPage
-                this.getSeat()
+               // this.getSeat()
+                this.class_seat = this.totalclass_seat[newPage-1];
             },
 
         }

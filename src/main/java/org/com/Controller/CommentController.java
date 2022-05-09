@@ -22,14 +22,8 @@ public class CommentController {
     public MyResponse QueryAllComment(@RequestParam int comment_article_id,@RequestParam int pagesize,@RequestParam int pagenum, @RequestHeader("Authorization") String token) {
         if (JwtUtil.VerifyToken(token)) {
             List<Comment> comments = commentService.QueryAllComment(comment_article_id);
-            List<Comment> commentList = new LinkedList<>();
             if (!comments.isEmpty()) {
-                int count = 0;
-                for (int i = (pagenum-1)*pagesize; count < pagesize && i < comments.size(); i++) {
-                    commentList.add(comments.get(i));
-                    count++;
-                }
-                return new MyResponse("200", "加载成功", String.valueOf(comments.size()), commentList, "");
+                return new MyResponse("200", "加载成功", String.valueOf(comments.size()), comments, "");
             }
             return new MyResponse("201", "此帖子现在没有任何回复", "", null, "");
 

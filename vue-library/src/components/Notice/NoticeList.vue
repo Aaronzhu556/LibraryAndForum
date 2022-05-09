@@ -87,6 +87,10 @@
 
                 },
                 noticeList: [],
+
+                totalNoticeList:[[]],
+                notices:[],
+                max_page:0,
                 total: 0,
                 //添加用户对话框显示状态
                 addDialogVisible: false,
@@ -113,7 +117,16 @@
             this.getNoticeList()
         },
         methods: {
+            resetAllData(){
+                this.queryInfo.pagenum = 1;
+                this.articleList_admin = [];
+                this.totalArticleList_admin =[[]];
+                this.articles=[];
+                this.max_page=0;
+                this.total= 0;
+            },
             getNoticeList() {
+                this.resetAllData();
                 axios.post('/api/notice/getallnotice', JSON.stringify({
                     querytext:this.queryInfo.querytext,
                     pagenum:this.queryInfo.pagenum,
@@ -126,8 +139,18 @@
 
                 }).then(response => {
                     if (parseInt(response.data.code) === 200) {
-                        this.noticeList = response.data.object;
-                        console.log(this.userList)
+                        this.notices = response.data.object;
+                        this.max_page = Math.ceil(this.notices.length / this.queryInfo.pagesize) || 1;
+                        for (let i = 0; i < this.max_page; i++) {
+                            this.totalNoticeList[i] = this.notices.slice(
+                                this.queryInfo.pagesize * i,
+                                this.queryInfo.pagesize * (i + 1)
+                            );
+                            console.log(this.totalNoticeList[i]);
+                        }
+                        this.noticeList = this.totalNoticeList[this.queryInfo.pagenum-1];
+
+
                         this.total = parseInt(response.data.info);
                     } else {
                         this.$message.info(response.data.msg)
@@ -162,35 +185,9 @@
             //监听页码值改变的事件
             handleCurrentChange(newPage) {
                 this.queryInfo.pagenum = newPage
-                this.getNoticeList()
+                //this.getNoticeList()
+                this.noticeList = this.totalNoticeList[newPage-1];
             },
-
-            //确定添加用户
-            addNotice() {
-                this.$refs.addFormRef.validate(valid => {
-                    if (valid) {
-                        axios.post('/api/notice/addnotice', JSON.stringify(this.addForm),{
-                            headers:{
-                                'Content-Type': 'application/json'
-                            }
-                        }).then(response => {
-
-                            if (parseInt(response.data.code)===200) {
-                                //隐藏对话框
-                                this.addDialogVisible = false
-
-                                this.$message.success(response.data.msg)
-                                this.getNoticeList()
-                            } else {
-                                this.$message.error(response.data.msg)
-                            }
-                        }).catch(() => {
-                            this.$message.error("操作失败")
-                        })
-                    }
-                })
-            },
-
 
         }
     }

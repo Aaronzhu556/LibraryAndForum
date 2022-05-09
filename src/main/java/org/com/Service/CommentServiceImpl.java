@@ -35,11 +35,11 @@ public class CommentServiceImpl implements CommentService {
             List<Reply> replies = replyMapper.GetAllReplyById(comment.getComment_id());
             for (Reply reply:replies){
 
-                reply.setReply_from_img("/api"+userMapper.GetUserImgByName(reply.getReply_from()));
+                reply.setReply_from_img( userMapper.GetUserImgByName(reply.getReply_from()));
             }
             comment.setComment_input_show(false);
             comment.setComment_reply_list(replies);
-            comment.setComment_user_img("/api"+userMapper.GetUserImgByName(comment.getComment_user_name()));
+            comment.setComment_user_img( userMapper.GetUserImgByName(comment.getComment_user_name()));
             comment.setComment_box_show(false);
         }
         return commentList;

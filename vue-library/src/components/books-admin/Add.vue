@@ -216,7 +216,7 @@
 				console.log(res);
 				if (parseInt(res.code) === 200) {
 					this.$message.success(res.msg)
-					this.addForm.book_img = res.info
+					this.addForm.book_img = "/api"+ res.info
 					console.log(this.addForm.book_img);
 				} else {
 					this.$message.error(res.msg)
@@ -227,6 +227,7 @@
 				this.$refs.addFormRef.validate(valid => {
 					if (valid) {
 						//深拷贝一份form表单数据
+
 						const form = _.cloneDeep(this.addForm)
 						form.book_category = this.addForm.book_category[1];
 

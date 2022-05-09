@@ -242,7 +242,6 @@
                 }).then((response)=>{
                     if (parseInt(response.data.code)===200){
                         this.book = response.data.object;
-                        this.book.book_img = "/api" + this.book.book_img
                         console.log( this.book)
                     }
                 })

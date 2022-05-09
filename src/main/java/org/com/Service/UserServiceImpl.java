@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
         }else {
              userList = userMapper.GetAllUser();
         }
-        for (User user:userList) user.setUser_img("/api"+user.getUser_img());
+        for (User user:userList) user.setUser_img(user.getUser_img());
         return userList;
     }
 
@@ -109,12 +109,20 @@ public class UserServiceImpl implements UserService {
                 if (temp.get(i).getArticle_user_name()==user.getUser_name()) user_like = user_like +1;
             }
             user.setUser_hot(user_article_num+user_fans+user_like);
-            user.setUser_img("/api"+user.getUser_img());
+            user.setUser_img(user.getUser_img());
             user.setUser_fans(user_fans);
             user.setUser_great(user_like);
             user.setUser_article_num(user_article_num);
         }
         userList.sort(Comparator.comparing(User::getUser_hot).reversed());
         return userList;
+    }
+    @Override
+    public User GetUserInfo(String user_name){
+        return userMapper.QuerybyName(user_name);
+    }
+    @Override
+    public int EditUserInfo(User user){
+        return userMapper.UpdateUserInfo(user);
     }
 }

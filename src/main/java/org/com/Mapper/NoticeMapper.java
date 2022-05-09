@@ -16,7 +16,7 @@ public interface NoticeMapper {
     public int DeleteNotice(int notice_id);
     @Insert("insert into t_notice(notice_title,notice_content,notice_time) values(#{notice_title},#{notice_content},#{notice_time})")
     public int AddNotice(Notice notice);
-    @Select("select * from t_notice where notice content  '%' #{notice_content} '%'")
+    @Select("select * from t_notice where notice_content  like '%' #{notice_content} '%'")
     public List<Notice> GetNoticeByName(String notice_content);
 
 

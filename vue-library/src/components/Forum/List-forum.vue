@@ -264,6 +264,9 @@
 					querydata:'',
 				},
 				articleList:[],
+                totalArticleList:[],
+                articles:[],
+                max_page:0,
                 articleList_Hot:[],
                 articleList_Hot_Simple:[],
                 unReadReply:[],
@@ -297,6 +300,7 @@
 			// console.log(this.managerRole);
 		},
 		methods: {
+
             readAll(){
                 var unreadreplylist=[];
                 for (var i=0;i<this.unReadReply.length;i++) unreadreplylist.push(this.unReadReply[i].reply_id)
@@ -381,7 +385,7 @@
                     }
                 }).then((response)=>{
                     if (parseInt(response.data.code)===200){
-                        this.imageUrl = "/api" + response.data.info;
+                        this.imageUrl = response.data.info;
                         console.log(this.imageUrl)
                     }
                 }).catch(()=>{
@@ -488,7 +492,16 @@
                     })
                     .catch(_ => {});
             },
+            resetAllData(){
+                this.queryInfo.pagenum = 1;
+                this.articleList = [];
+                this.totalArticleList =[];
+                this.articles=[];
+                this.max_page=0;
+                this.total= 0;
+            },
             getArticleList(){
+                this.resetAllData();
 				axios.post('/api/article/getallarticle',JSON.stringify({
 					querytext:this.queryInfo.querytext,
 					pagenum:this.queryInfo.pagenum,
@@ -502,18 +515,24 @@
 
 				}).then(response => {
 					if (parseInt(response.data.code) === 200) {
-						this.articleList = response.data.object;
-						for (var i=0;i<this.articleList.length;i++){
-						    if (this.articleList[i].article_user_name===this.user_name_article) this.article_user_num++;
+						this.articles = response.data.object;
+						for (var i=0;i<this.articles.length;i++){
+						    if (this.articles[i].article_user_name===this.user_name_article) this.article_user_num++;
                         }
+                        this.max_page = Math.ceil(this.articles.length / this.queryInfo.pagesize) || 1;
+                        for (let i = 0; i < this.max_page; i++) {
+                            this.totalArticleList[i] = this.articles.slice(
+                                this.queryInfo.pagesize * i,
+                                this.queryInfo.pagesize * (i + 1)
+                            );
+                            console.log(this.totalArticleList[i]);
+                        }
+                        this.articleList = this.totalArticleList[this.queryInfo.pagenum-1];
 
-						this.queryInfo.querydata = this.queryInfo.querytext;
-						if (parseInt(response.data.page)===1){
-							this.queryInfo.pagenum = parseInt(response.data.page);
-						}
+
+
 						if (this.queryInfo.querytext!=="") this.$message.success("已显示关于"+this.queryInfo.querytext+"的帖子");
-						console.log("Hi 这里出错啦")
-						console.log(this.articleList)
+
 						this.total = parseInt(response.data.info);
 						//this.articleList_Hot = this.articleList.slice(0,5);
 						//this.changeArticleTitle();
@@ -559,7 +578,7 @@
 			//监听页码值改变的事件
 			handleCurrentChange(newPage) {
 				this.queryInfo.pagenum = newPage
-				this.getArticleList()
+                this.articleList = this.totalArticleList[newPage-1];
 			},
 
 			goAddPage(){

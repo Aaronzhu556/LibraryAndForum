@@ -16,6 +16,29 @@
                                 <el-button slot="append" icon="el-icon-search" @click="getAllFind"></el-button>
                             </el-input>
                         </el-col>
+                        <el-col :span="10" >
+                            <el-date-picker
+                                    v-model="queryInfo.querydata"
+                                    type="datetimerange"
+                                    range-separator="至"
+                                    start-placeholder="开始日期"
+                                    end-placeholder="结束日期"
+                                    :picker-options="pickerBeginDateBefore"
+
+                                    value-format="yyyy/MM/dd HH:mm:ss"
+                                    :clearable="true"
+                                    @change="getFindDate"
+                                    >
+
+                            </el-date-picker>
+                            <el-button   icon="el-icon-search" style="position: absolute;left: 720px; " @click="queryFindByTimeRange">查找</el-button>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-button   @click="clearall" type="primary">重置查询条件</el-button>
+                        </el-col>
+
+
+
                     </el-row>
                     <el-empty description="暂无数据" v-if="findList.length===0"></el-empty>
                     <el-row v-for="(item,index) in findList_new" :key="index" :gutter="20" >
@@ -115,18 +138,26 @@
         name:'find',
         data() {
             return{
+                pickerBeginDateBefore: {
+                    disabledDate(time) {
+                        return time.getTime() > Date.now();
+                    }
+                },
                 queryInfo: {
                     querytext: '',
                     pagenum: 1,
-                    pagesize: 20,
+                    pagesize: 8,
                     querydata:'',
 
                 },
                 findList:[],
+                totalFindList:[[]],
                 findList_new:[[]],
                 total:0,
+                max_page:0,
                 findData:[],
-
+                queryStartTime:'',
+                queryEndTime:'',
                 previewDialogVisible: false,
 
 
@@ -137,27 +168,73 @@
             this.getAllFind();
         },
         methods:{
+            clearall(){
+                this.queryInfo.querydata='';
+                this.queryInfo.querytext = '';
+                this.getAllFind();
+            },
+            getFindDate(datetime){
 
-            operateFind(){
+                this.queryInfo.querydata = datetime;
+            },
+            resetAllData(){
+                this.queryInfo.pagenum = 1;
+                this.findList = [];
+                this.totalFindList =[[]];
+                this.findList_new = [[]];
+
+                this.max_page=0;
+                this.total= 0;
+            },
+            queryFindByTimeRange(){
+                this.resetAllData();
+                console.log( this.queryInfo.querydata[0])
+                axios.get('/api/find/getfindbytimerange',{
+                  params:{
+                      start_time : this.queryInfo.querydata[0],
+                      end_time :this.queryInfo.querydata[1]
+                  },
+                    headers:{
+                      'Authorization' :sessionStorage.getItem('token')
+                    }
+                }
+               ).then(response=>{
+                   if (parseInt(response.data.code)===200){
+                       this.findList = response.data.object;
+                       this.max_page = Math.ceil(this.findList.length / this.queryInfo.pagesize) || 1;
+                       for (let i = 0; i < this.max_page; i++) {
+                           this.totalFindList[i] = this.findList.slice(
+                               this.queryInfo.pagesize * i,
+                               this.queryInfo.pagesize * (i + 1)
+                           );
+                           console.log(this.totalFindList[i]);
+                       }
+
+                       this.total = parseInt(response.data.info);
+                       this.operateFind(this.queryInfo.pagenum);
+                   }
+                })
+            },
+            operateFind(current_page){
                 this.findList_new= [[]];
                 this.findList_new = new Array();
                 var count_row = 0;
-                count_row = Math.ceil( this.findList.length / 4);
+                count_row = Math.ceil( this.totalFindList[current_page-1].length / 4);
 
 
                 for (var i = 0;i<count_row;i++){
                     this.findList_new[i] = new Array();
-                    for (var j = i *4 , k=0; j < i * 4 +4 && j<this.findList.length && k <4; j++,k++){
-                        if (JSON.stringify(this.findList[j]) === '{}'){}
+                    for (var j = i *4 , k=0; j < i * 4 +4 && j<this.totalFindList[current_page-1].length && k <4; j++,k++){
+                        if (JSON.stringify(this.totalFindList[current_page-1][j]) === '{}'){}
                         else {
-                            this.findList_new[i][k] = this.findList[j];
-                            for (var o=0;o<this.findList_new[i][k].find_img_list.length;o++)
-                                this.findList_new[i][k].find_img_list[o] = "/api" + this.findList_new[i][k].find_img_list[o];
+                            this.findList_new[i][k] = this.totalFindList[current_page-1][j];
                         }
                     }
                 }
             },
             getAllFind(){
+                this.queryInfo.pagenum = 1;
+
                 axios.post("/api/find/getallfind",JSON.stringify(this.queryInfo),{
                     headers:{
                         'Authorization' :sessionStorage.getItem('token'),
@@ -166,13 +243,17 @@
                 }).then(response=>{
                     if (parseInt(response.data.code)===200){
                         this.findList = response.data.object;
-                        console.log(this.findList)
-                        this.queryInfo.querydata = this.queryInfo.querytext;
-                        if (parseInt(response.data.page)===1){
-                            this.queryInfo.pagenum = parseInt(response.data.page);
+                        this.max_page = Math.ceil(this.findList.length / this.queryInfo.pagesize) || 1;
+                        for (let i = 0; i < this.max_page; i++) {
+                            this.totalFindList[i] = this.findList.slice(
+                                this.queryInfo.pagesize * i,
+                                this.queryInfo.pagesize * (i + 1)
+                            );
+                            console.log(this.totalFindList[i]);
                         }
+
                         this.total = parseInt(response.data.info);
-                        this.operateFind();
+                        this.operateFind(this.queryInfo.pagenum);
                     }else this.$message.info(response.data.msg);
                 }).catch(()=>{
                     this.$message.error("发生错误")
@@ -208,7 +289,8 @@
             //监听页码值改变的事件
             handleCurrentChange(newPage) {
                 this.queryInfo.pagenum = newPage
-                this.getAllFind()
+                //this.getAllFind()
+                this.operateFind(newPage);
             },
         },
     }

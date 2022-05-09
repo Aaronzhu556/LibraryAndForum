@@ -34,18 +34,8 @@ public class SeatController {
     public MyResponse GetAllSeatByQuery(@RequestBody QueryInfo queryInfo,@RequestHeader("Authorization") String token){
         if (JwtUtil.VerifyToken(token)){
             List<Seat> seats = seatService.GetAllSeatByQuery();
-            List<Seat> seatList = new LinkedList<>();
-            int count=0;
-            for (int i = ((queryInfo.getPagenum() - 1) * queryInfo.getPagesize()); count < queryInfo.getPagesize(); i++) {
-                try {
 
-                    seatList.add(seats.get(i));
-                    count++;
-                } catch (Exception e) {
-                    break;
-                }
-            }
-            if (!seatList.isEmpty())return new MyResponse("200","查询成功",String.valueOf(seats.size()),seatList,"");
+            if (!seats.isEmpty())return new MyResponse("200","查询成功",String.valueOf(seats.size()),seats,"");
             else return new MyResponse("201","查询失败","",null,"");
         }else  return new MyResponse("202","Jwt验证失败","",null,"");
 

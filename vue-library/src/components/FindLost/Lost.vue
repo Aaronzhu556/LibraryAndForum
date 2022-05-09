@@ -16,6 +16,27 @@
                             <el-button slot="append" icon="el-icon-search" @click="getAllLost"></el-button>
                         </el-input>
                     </el-col>
+                    <el-col :span="10" >
+                        <el-date-picker
+                                v-model="queryInfo.querydata"
+                                type="datetimerange"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                :picker-options="pickerBeginDateBefore"
+
+                                value-format="yyyy/MM/dd HH:mm:ss"
+                                :clearable="true"
+                                @change="getLostDate"
+                        >
+
+                        </el-date-picker>
+                        <el-button   icon="el-icon-search" style="position: absolute;left: 720px; " @click="queryLostByTimeRange">查找</el-button>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-button   @click="clearall" type="primary">重置查询条件</el-button>
+                    </el-col>
+
                 </el-row>
                 <el-empty description="暂无数据" v-if="lostList.length===0"></el-empty>
                 <el-row v-for="(item,index) in lostList_new" :key="index" :gutter="20" >
@@ -35,7 +56,7 @@
 
                                 <div class="bottom clearfix">
                                     <!--                                    <el-link icon="el-icon-more-outline" @click.native="open2(book)"></el-link>-->
-                                    <el-button  class="button" @click="showLost(lost)">查看失物详情</el-button>
+                                    <el-button  class="button" @click="showLost(lost)">查看拾物详情</el-button>
                                 </div>
                             </div>
                         </el-card>
@@ -52,7 +73,7 @@
         </el-scrollbar>
         </div>
 
-        <el-dialog title="失物详情" width="50%" :visible.sync="previewDialogVisible">
+        <el-dialog title="拾物详情" width="50%" :visible.sync="previewDialogVisible">
             <el-descriptions>
                 <el-descriptions-item label="失物名">{{this.lostData[1]}}</el-descriptions-item>
                 <el-descriptions-item label="失物时间">{{this.lostData[3]}}</el-descriptions-item>
@@ -115,16 +136,23 @@
         name:'lost',
         data() {
             return{
+                pickerBeginDateBefore: {
+                    disabledDate(time) {
+                        return time.getTime() > Date.now();
+                    }
+                },
                 queryInfo: {
                     querytext: '',
                     pagenum: 1,
-                    pagesize: 20,
+                    pagesize: 8,
                     querydata:'',
 
                 },
                 lostList:[],
+                totalLostList:[[]],
                 lostList_new:[[]],
                 total:0,
+                max_page:0,
                 lostData:[],
 
                 previewDialogVisible: false,
@@ -137,27 +165,72 @@
             this.getAllLost();
         },
         methods:{
+            clearall(){
+                this.queryInfo.querydata='';
+                this.queryInfo.querytext = '';
+                this.getAllLost();
+            },
+            getLostDate(datetime){
 
-            operateLost(){
+                this.queryInfo.querydata = datetime;
+            },
+            resetAllData(){
+                this.queryInfo.pagenum = 1;
+                this.lostList = [];
+                this.totalLostList =[[]];
+                this.lostList_new = [[]];
+                this.max_page=0;
+                this.total= 0;
+            },
+            queryLostByTimeRange(){
+                this.resetAllData();
+
+                axios.get('/api/lost/getlostbytimerange',{
+                        params:{
+                            start_time : this.queryInfo.querydata[0],
+                            end_time :this.queryInfo.querydata[1]
+                        },
+                        headers:{
+                            'Authorization' :sessionStorage.getItem('token')
+                        }
+                    }
+                ).then(response=>{
+                    if (parseInt(response.data.code)===200){
+                        this.lostList = response.data.object;
+                        this.max_page = Math.ceil(this.lostList.length / this.queryInfo.pagesize) || 1;
+                        for (let i = 0; i < this.max_page; i++) {
+                            this.totalLostList[i] = this.lostList.slice(
+                                this.queryInfo.pagesize * i,
+                                this.queryInfo.pagesize * (i + 1)
+                            );
+                            console.log(this.totalLostList[i]);
+                        }
+
+                        this.total = parseInt(response.data.info);
+                        this.operateLost(this.queryInfo.pagenum);
+                    }
+                })
+            },
+            operateLost(current_page){
                 this.lostList_new= [[]];
                 this.lostList_new = new Array();
                 var count_row = 0;
-                count_row = Math.ceil( this.lostList.length / 4);
+                count_row = Math.ceil( this.totalLostList[current_page-1].length / 4);
 
 
                 for (var i = 0;i<count_row;i++){
                     this.lostList_new[i] = new Array();
-                    for (var j = i *4 , k=0; j < i * 4 +4 && j<this.lostList.length && k <4; j++,k++){
-                        if (JSON.stringify(this.lostList[j]) === '{}'){}
+                    for (var j = i *4 , k=0; j < i * 4 +4 && j<this.totalLostList[current_page-1].length && k <4; j++,k++){
+                        if (JSON.stringify(this.totalLostList[current_page-1][j]) === '{}'){}
                         else {
-                            this.lostList_new[i][k] = this.lostList[j];
-                            for (var o=0;o<this.lostList_new[i][k].lost_img_list.length;o++)
-                                this.lostList_new[i][k].lost_img_list[o] = "/api" + this.lostList_new[i][k].lost_img_list[o];
+                            this.lostList_new[i][k] = this.totalLostList[current_page-1][j];
+
                         }
                     }
                 }
             },
             getAllLost(){
+                this.queryInfo.pagenum =1 ;
                 axios.post("/api/lost/getalllost",JSON.stringify(this.queryInfo),{
                     headers:{
                         'Authorization' :sessionStorage.getItem('token'),
@@ -166,24 +239,22 @@
                 }).then(response=>{
                     if (parseInt(response.data.code)===200){
                         this.lostList = response.data.object;
-                        console.log(this.lostList)
-                        this.queryInfo.querydata = this.queryInfo.querytext;
-                        if (parseInt(response.data.page)===1){
-                            this.queryInfo.pagenum = parseInt(response.data.page);
+                        this.max_page = Math.ceil(this.lostList.length / this.queryInfo.pagesize) || 1;
+                        for (let i = 0; i < this.max_page; i++) {
+                            this.totalLostList[i] = this.lostList.slice(
+                                this.queryInfo.pagesize * i,
+                                this.queryInfo.pagesize * (i + 1)
+                            );
+                            console.log(this.totalLostList[i]);
                         }
+
                         this.total = parseInt(response.data.info);
-                        this.operateLost();
+                        this.operateLost(this.queryInfo.pagenum);
                     }else this.$message.info(response.data.msg);
                 }).catch(()=>{
                     this.$message.error("发生错误")
                 })
             },
-
-
-
-
-
-
 
 
             showLost(current_data){
@@ -198,8 +269,6 @@
             },
 
 
-
-
             //监听pagesize改变的事件
             handleSizeChange(newSize) {
                 this.queryInfo.pagesize = newSize
@@ -208,7 +277,8 @@
             //监听页码值改变的事件
             handleCurrentChange(newPage) {
                 this.queryInfo.pagenum = newPage
-                this.getAllLost()
+                //this.getAllLost()
+                this.operateLost(newPage)
             },
         },
     }

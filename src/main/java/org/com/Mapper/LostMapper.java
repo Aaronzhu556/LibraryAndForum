@@ -1,9 +1,6 @@
 package org.com.Mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.com.Entity.Lost;
 
 import java.util.List;
@@ -18,6 +15,7 @@ public interface LostMapper {
     public int AddLost(Lost lost);
     @Update("update t_lost set lost_status=#{lost_status} where lost_id=#{lost_id}")
     public int UpdateLostStatus(String lost_status,int lost_id);
-
+    @Delete("delete from t_lost where lost_id=#{lost_id}")
+    public int DeleteLost(int lost_id);
 
 }

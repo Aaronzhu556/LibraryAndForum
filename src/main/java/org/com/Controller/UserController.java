@@ -76,18 +76,7 @@ public class UserController {
     public MyResponse GetAllUser(@RequestBody QueryInfo queryInfo,@RequestHeader("Authorization")String token){
         if (JwtUtil.VerifyToken(token)){
             List<User> users = userService.GetAllUser(queryInfo);
-            List<User> userList = new LinkedList<>();
-            int count=0;
-            for (int i = ((queryInfo.getPagenum() - 1) * queryInfo.getPagesize()); count < queryInfo.getPagesize(); i++) {
-                try {
-
-                    userList.add(users.get(i));
-                    count++;
-                } catch (Exception e) {
-                    break;
-                }
-            }
-            if (!userList.isEmpty()) return new MyResponse("200","查询成功",String.valueOf(users.size()),userList,"");
+            if (!users.isEmpty()) return new MyResponse("200","查询成功",String.valueOf(users.size()),users,"");
             else return new MyResponse("201","暂无用户数据","",null,"");
         }else return new MyResponse("202","Jwt验证失败","",null,"");
     }
@@ -118,5 +107,21 @@ public class UserController {
             List<User> userList = userService.GetHotUser();
             return new MyResponse("200","获取成功","",userList.subList(0,4),"");
         }else  return new MyResponse("201","Jwt验证失败","",null,"");
+    }
+    @ResponseBody
+    @RequestMapping("/queryuserinfo")
+    public MyResponse GetUserInfo(@RequestParam String user_name,@RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            User user = userService.GetUserInfo(user_name);
+            return new MyResponse("200","查询成功","",user,"");
+        }else  return new MyResponse("201","Jwt验证失败","",null,"");
+    }
+    @ResponseBody
+    @RequestMapping("/updateuserinfo")
+    public MyResponse EditUserInfo(@RequestBody User user,@RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            userService.EditUserInfo(user);
+            return new MyResponse("200","更新成功","",null,"");
+        }else return new MyResponse("201","Jwt验证失败","",null,"");
     }
 }

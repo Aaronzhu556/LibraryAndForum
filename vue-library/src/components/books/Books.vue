@@ -54,7 +54,7 @@
 
                 <!--分页-->
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="queryInfo.pagenum"
-                               :page-sizes="[8,16, 32,64]" :page-size="queryInfo.pagesize" :total="total"
+                               :page-sizes="[4,8,16, 32,64]" :page-size="queryInfo.pagesize" :total="total"
                                layout="total, sizes, prev, pager, next, jumper" background>
                 </el-pagination>
             </el-card>
@@ -201,7 +201,7 @@
                 queryInfo: {
                     querytext: '',
                     pagenum: 1,
-                    pagesize: 8,
+                    pagesize: 4,
                     querydata:'',
                     querycateid:0,
                 },
@@ -214,6 +214,10 @@
                 comment_all:0,
                 previewDialogVisible: false,
                 previewDialogVisible2 :false,
+
+                current_page:0,
+                max_page:0,
+                totalBookList:[[]],
                 bookList:[],
                 bookList_new : [[]],
                 bookCommentList:[],
@@ -263,7 +267,15 @@
                         if (parseInt(response.data.code)===200){
                             this.$message.success(response.data.msg);
                             this.bookList = response.data.object;
-                            this.operateBook();
+                            this.max_page = Math.ceil(this.bookList.length / this.queryInfo.pagesize) || 1;
+                            for (let i = 0; i < this.max_page; i++) {
+                                this.totalBookList[i] = this.bookList.slice(
+                                    this.queryInfo.pagesize * i,
+                                    this.queryInfo.pagesize * (i + 1)
+                                );
+                                console.log(this.totalBookList[i]);
+                            }
+                            this.operateBook(this.queryInfo.pagenum);
                         }
                     }).catch(()=>{
                         this.$message.error("发生错误")
@@ -287,7 +299,15 @@
                         if (parseInt(response.data.code)===200){
                             this.$message.success(response.data.msg);
                             this.bookList = response.data.object;
-                            this.operateBook();
+                            this.max_page = Math.ceil(this.bookList.length / this.queryInfo.pagesize) || 1;
+                            for (let i = 0; i < this.max_page; i++) {
+                                this.totalBookList[i] = this.bookList.slice(
+                                    this.queryInfo.pagesize * i,
+                                    this.queryInfo.pagesize * (i + 1)
+                                );
+                                console.log(this.totalBookList[i]);
+                            }
+                            this.operateBook(this.queryInfo.pagenum);
                         }
                     }).catch(()=>{
                         this.$message.error("发生错误")
@@ -311,7 +331,15 @@
                         if (parseInt(response.data.code)===200){
                             this.$message.success(response.data.msg);
                             this.bookList = response.data.object;
-                            this.operateBook();
+                            this.max_page = Math.ceil(this.bookList.length / this.queryInfo.pagesize) || 1;
+                            for (let i = 0; i < this.max_page; i++) {
+                                this.totalBookList[i] = this.bookList.slice(
+                                    this.queryInfo.pagesize * i,
+                                    this.queryInfo.pagesize * (i + 1)
+                                );
+                                console.log(this.totalBookList[i]);
+                            }
+                            this.operateBook(this.queryInfo.pagenum);
                         }
                     }).catch(()=>{
                         this.$message.error("发生错误")
@@ -412,72 +440,29 @@
 
 
             },
-            borrowBook(){
-                var  current_id = parseInt(this.bookData[0]);
-                console.log(current_id)
-                axios.get('/api/book/borrowbooks',
-                    {
-                        params:{ book_id: current_id},
-                        headers: {
-                            'Authorization': sessionStorage.getItem('token')}
-
-                    }
-                ).then(response =>{
-                    if(parseInt(response.data.code)===200){
-                        this.$message.success(response.data.msg)
-                        this.getBookList();
-                    }else if (parseInt(response.data.code)===201){
-                        this.$message.info(response.data.msg)
-                    }else this.$message.error(response.data.msg)
-                }).catch((e)=>{
-                    this.$message.error("发生错误")
-                })
-            },
 
 
 
-            showbook(current_data){
-                this.bookData = [];
-                this.bookData.push(current_data.book_id)
-                this.bookData.push(current_data.book_name)
-                this.bookData.push(current_data.book_img)
-                this.bookData.push(current_data.book_isbn)
-                this.bookData.push(current_data.book_status)
-                this.bookData.push(current_data.book_money)
-                this.bookData.push(current_data.book_category_name)
-                this.bookData.push(current_data.book_address)
-                this.bookData.push(current_data.book_context)
 
 
-                this.previewDialogVisible = true;
-                console.log(this.bookData)
-            },
-            operateBook(){
+            operateBook(current_page){
                 this.bookList_new= [[]];
                 this.bookList_new = new Array();
                 var count_row = 0;
-                count_row = Math.ceil( this.bookList.length / 4);
-                /*
-                if (this.bookList.length%4 !==0 ){
-                    count_row = this.bookList.length / 4 + 1
-                }else {
-                    count_row = this.bookList.length;
-                }
-                */
+                count_row = Math.ceil( this.totalBookList[current_page-1].length / 4);
 
-                console.log(this.bookList.length);
                 for (var i = 0;i<count_row;i++){
                     this.bookList_new[i] = new Array();
-                    for (var j = i *4 , k=0; j < i * 4 +4 && j<this.bookList.length && k <4; j++,k++){
-                        if (JSON.stringify(this.bookList[j]) === '{}'){}
+                    for (var j = i *4 , k=0; j < i * 4 +4 && j<this.totalBookList[current_page-1].length && k <4; j++,k++){
+                        if (JSON.stringify(this.totalBookList[current_page-1][j]) === '{}'){}
                         else {
-                            this.bookList_new[i][k] = this.bookList[j];
-                            this.bookList_new[i][k].book_img = "/api" + this.bookList_new[i][k].book_img;
+                            this.bookList_new[i][k] = this.totalBookList[current_page-1][j];
                         }
                     }
                 }
             },
             getBookList(){
+                this.queryInfo.pagenum = 1;
                 axios.post('/api/book/querybooks',JSON.stringify({
                     querytext:this.queryInfo.querytext,
                     pagenum:this.queryInfo.pagenum,
@@ -493,13 +478,23 @@
                 }).then(response => {
                     if (parseInt(response.data.code) === 200) {
                         this.bookList = response.data.object;
-                        this.queryInfo.querydata = this.queryInfo.querytext;
-                        if (parseInt(response.data.page)===1){
-                            this.queryInfo.pagenum = parseInt(response.data.page);
+                        this.max_page = Math.ceil(this.bookList.length / this.queryInfo.pagesize) || 1;
+                        for (let i = 0; i < this.max_page; i++) {
+                            this.totalBookList[i] = this.bookList.slice(
+                                this.queryInfo.pagesize * i,
+                                this.queryInfo.pagesize * (i + 1)
+                            );
+                            console.log(this.totalBookList[i]);
                         }
-                        console.log("Hi 这里出错啦")
-                        console.log(this.bookList)
-                        this.operateBook();
+
+
+                        // this.queryInfo.querydata = this.queryInfo.querytext;
+                        // if (parseInt(response.data.page)===1){
+                        //     this.queryInfo.pagenum = parseInt(response.data.page);
+                        // }
+                        // console.log("Hi 这里出错啦")
+                        // console.log(this.bookList)
+                        this.operateBook(this.queryInfo.pagenum);
                         this.total = parseInt(response.data.info);
                     } else {
                         this.$message.info(response.data.msg)
@@ -519,7 +514,8 @@
             //监听页码值改变的事件
             handleCurrentChange(newPage) {
                 this.queryInfo.pagenum = newPage
-                this.getBookList()
+                //this.getBookList()
+                this.operateBook(newPage)
             },
         },
     }

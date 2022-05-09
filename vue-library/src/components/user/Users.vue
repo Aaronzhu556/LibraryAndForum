@@ -59,71 +59,6 @@
 			               layout="total, sizes, prev, pager, next, jumper" background>
 			</el-pagination>
 		</el-card>
-
-
-<!--		&lt;!&ndash;添加用户的对话框&ndash;&gt;-->
-<!--		<el-dialog title="添加用户" width="50%" :visible.sync="addDialogVisible" :close-on-click-modal="false" @close="addDialogClosed">-->
-<!--			&lt;!&ndash;内容主体&ndash;&gt;-->
-<!--			<el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">-->
-<!--				<el-form-item label="用户名" prop="username">-->
-<!--					<el-input v-model="addForm.username"></el-input>-->
-<!--				</el-form-item>-->
-<!--				<el-form-item label="密码" prop="password">-->
-<!--					<el-input v-model="addForm.password"></el-input>-->
-<!--				</el-form-item>-->
-<!--				<el-form-item label="邮箱" prop="email">-->
-<!--					<el-input v-model="addForm.email"></el-input>-->
-<!--				</el-form-item>-->
-<!--				<el-form-item label="手机号" prop="mobile">-->
-<!--					<el-input v-model="addForm.mobile"></el-input>-->
-<!--				</el-form-item>-->
-<!--			</el-form>-->
-<!--			&lt;!&ndash;底部&ndash;&gt;-->
-<!--			<span slot="footer">-->
-<!--				<el-button @click="addDialogVisible=false">取 消</el-button>-->
-<!--				<el-button type="primary" @click="addUser">确 定</el-button>-->
-<!--			</span>-->
-<!--		</el-dialog>-->
-
-<!--		&lt;!&ndash;修改用户的对话框&ndash;&gt;-->
-<!--		<el-dialog title="修改用户" width="50%" :visible.sync="editDialogVisible" :close-on-click-modal="false" @close="editDialogClosed">-->
-<!--			&lt;!&ndash;内容主体&ndash;&gt;-->
-<!--			<el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="70px">-->
-<!--				<el-form-item label="用户名" prop="username">-->
-<!--					<el-input v-model="editForm.username" :disabled="true"></el-input>-->
-<!--				</el-form-item>-->
-<!--				<el-form-item label="邮箱" prop="email">-->
-<!--					<el-input v-model="editForm.email"></el-input>-->
-<!--				</el-form-item>-->
-<!--				<el-form-item label="手机号" prop="mobile">-->
-<!--					<el-input v-model="editForm.mobile"></el-input>-->
-<!--				</el-form-item>-->
-<!--			</el-form>-->
-<!--			&lt;!&ndash;底部&ndash;&gt;-->
-<!--			<span slot="footer">-->
-<!--				<el-button @click="editDialogVisible=false">取 消</el-button>-->
-<!--				<el-button type="primary" @click="editUser">确 定</el-button>-->
-<!--			</span>-->
-<!--		</el-dialog>-->
-
-<!--		&lt;!&ndash;分配角色的对话框&ndash;&gt;-->
-<!--		<el-dialog title="分配角色" width="50%" :visible.sync="setRoleDialogVisible" :close-on-click-modal="false" @close="setRoleDialogClosed">-->
-<!--			&lt;!&ndash;内容主体&ndash;&gt;-->
-<!--			<div>-->
-<!--				<p>当前的用户：{{ userInfo.username }}</p>-->
-<!--				<p>当前的角色：{{ userInfo.role_name }}</p>-->
-<!--				<p>分配新角色：-->
-<!--					<el-select v-model="selectRoleId" placeholder="请选择">-->
-<!--						<el-option v-for="item in rolesList" :key="item.id" :label="item.roleName" :value="item.id"></el-option>-->
-<!--					</el-select>-->
-<!--				</p>-->
-<!--			</div>-->
-<!--			&lt;!&ndash;底部&ndash;&gt;-->
-<!--			<span slot="footer">-->
-<!--				<el-button @click="setRoleDialogVisible=false">取 消</el-button>-->
-<!--				<el-button type="primary" @click="saveRoleInfo">确 定</el-button>-->
-<!--			</span>-->
-<!--		</el-dialog>-->
 	</div>
 </template>
 
@@ -141,6 +76,9 @@
 
 				},
 				userList: [],
+				totalUserList:[[]],
+				users:[],
+				max_page:0,
 				total: 0,
 				//添加用户对话框显示状态
 				addDialogVisible: false,
@@ -176,7 +114,18 @@
 
 				}).then(response => {
 					if (parseInt(response.data.code) === 200) {
-						this.userList = response.data.object;
+						this.users = response.data.object;
+
+						this.max_page = Math.ceil(this.users.length / this.queryInfo.pagesize) || 1;
+						for (let i = 0; i < this.max_page; i++) {
+							this.totalUserList[i] = this.users.slice(
+									this.queryInfo.pagesize * i,
+									this.queryInfo.pagesize * (i + 1)
+							);
+							console.log(this.totalUserList[i]);
+						}
+						this.userList = this.totalUserList[this.queryInfo.pagenum-1];
+
 						console.log(this.userList)
 						this.total = parseInt(response.data.info);
 					} else {
@@ -217,7 +166,8 @@
 			//监听页码值改变的事件
 			handleCurrentChange(newPage) {
 				this.queryInfo.pagenum = newPage
-				this.getUserList()
+				//this.getUserList()
+				this.userList = this.totalUserList[newPage-1];
 			},
 			//监听添加用户对话框的关闭事件
 			addDialogClosed() {

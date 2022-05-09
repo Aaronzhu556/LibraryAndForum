@@ -32,7 +32,14 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="登记时间" prop="find_time"></el-table-column>
+                <el-table-column label="失物等级" prop="find_level">
+                   <template slot-scope="scope">
+                       <el-tag type="info" v-if="scope.row.find_level==='不紧急'">不紧急</el-tag>
+                       <el-tag type="warning" v-else-if="scope.row.find_level==='一般'">一般</el-tag>
+                       <el-tag type="danger" v-else-if="scope.row.find_level==='紧急'">紧急</el-tag>
+                   </template>
 
+                </el-table-column>
 
                 <!--				<el-table-column label="用户余额" prop="user_money"></el-table-column>-->
                 <el-table-column label="状态" prop= "find_status" width="200">
@@ -48,6 +55,14 @@
                                 @change="changeSwitch(scope.row,scope.$index)">
 
                         </el-switch>
+                    </template>
+                </el-table-column>
+                <el-table-column
+
+                        label="操作">
+                    <template slot-scope="scope">
+                        <el-button @click="deleteFind(scope.row)" type="text" size="small">删除</el-button>
+
                     </template>
                 </el-table-column>
 
@@ -72,6 +87,16 @@
                 <el-form-item label="失物细节" prop="find_details">
                     <el-input v-model="addForm.find_details"></el-input>
                 </el-form-item>
+                <el-form-item label="失物时间" prop="find_time">
+                    <el-date-picker type="datetime" :picker-options="pickerBeginDateBefore" placeholder="选择日期" format="yyyy/MM/DD HH:mm:ss" value-format="yyyy/MM/dd HH:mm:ss"  v-model="addForm.find_time" @change="getFindDate" ></el-date-picker>
+                </el-form-item>
+                <el-form-item label="失物等级" prop="find_level">
+                    <el-radio-group v-model="addForm.find_level" size="small">
+                        <el-radio-button label="紧急"  ></el-radio-button>
+                        <el-radio-button label="一般"  ></el-radio-button>
+                        <el-radio-button label="不紧急"  ></el-radio-button>
+                    </el-radio-group>
+                    </el-form-item>
                 <el-form-item label="失物图">
                     <el-upload action="/api/find/uploadfindimg" :on-preview="handlePreview"
                                :on-remove="handleRemove" list-type="picture" :headers="headerObj"  :limit="3" :on-success="handleSuccess" name="find_img">
@@ -101,6 +126,11 @@
         data() {
 
             return {
+                pickerBeginDateBefore: {
+                    disabledDate(time) {
+                        return time.getTime() > Date.now();
+                    }
+                },
                 //获取用户列表的参数对象
                 queryInfo: {
                     querytext: '',
@@ -111,10 +141,15 @@
                 },
                 labelPosition :'left',
                 findList: [],
+                totalFindList_admin:[[]],
+                finds:[],
+                max_page:0,
                 total: 0,
                 addForm:{
                     find_name:'',
                     find_details:'',
+                    find_time:'',
+                    find_level:'',
                     find_img_list:[],
                 },
                 addFormRules:{
@@ -124,6 +159,12 @@
                     find_details: [
                         {required: true, message: '请输入失物细节', trigger: 'blur'}
                     ],
+                    find_time:[
+                        {required: true, message: '请选择失物时间', trigger: 'blur'}
+                    ],
+                    find_level:[
+                        {required: true, message: '请选择失物等级', trigger: 'blur'}
+                    ]
 
                 },
                 //添加用户对话框显示状态
@@ -142,13 +183,42 @@
             this.getFindList()
         },
         methods: {
+            resetAllData(){
+                this.queryInfo.pagenum = 1;
+                this.findList = [];
+                this.totalFindList_admin =[[]];
+                this.finds=[];
+                this.max_page=0;
+                this.total= 0;
+            },
+            deleteFind(current_data){
+                axios.delete("/api/find/deletefind",{
+                    params:{
+                        find_id: current_data.find_id
+                    },
+                    headers:{
+                        'Authorization' : sessionStorage.getItem('token')
+                    }
+                }).then(response =>{
+                    if (parseInt(response.data.code)===200){
+                        this.$message.success("删除成功");
+                        this.getFindList();
+                    }
+                }).catch(()=>{
+                    this.$message.error("发生错误")
+                })
+            },
+            getFindDate(datetime){
+
+                this.addForm.find_time = datetime;
+            },
             closeDialog2(){
                 this.previewDialogVisible2 = false;
             },
             openDialog2(current_data){
                 this.previewPathList=[];
                 for (var i=0;i<current_data.find_img_list.length;i++){
-                    this.previewPathList.push("/api"+current_data.find_img_list[i]);
+                    this.previewPathList.push(current_data.find_img_list[i]);
                 }
                 this.previewDialogVisible2 =true;
             },
@@ -159,6 +229,7 @@
                 this.addDialogVisible = false;
             },
             getFindList() {
+                this.resetAllData();
                 axios.post('/api/find/getallfind', JSON.stringify(this.queryInfo), {
                     headers: {
                         'Content-Type': 'application/json'
@@ -166,8 +237,16 @@
 
                 }).then(response => {
                     if (parseInt(response.data.code) === 200) {
-                        this.findList = response.data.object;
-
+                        this.finds = response.data.object;
+                        this.max_page = Math.ceil(this.finds.length / this.queryInfo.pagesize) || 1;
+                        for (let i = 0; i < this.max_page; i++) {
+                            this.totalFindList_admin[i] = this.finds.slice(
+                                this.queryInfo.pagesize * i,
+                                this.queryInfo.pagesize * (i + 1)
+                            );
+                            console.log(this.totalFindList_admin[i]);
+                        }
+                        this.findList = this.totalFindList_admin[this.queryInfo.pagenum-1];
                         this.total = parseInt(response.data.info);
                     } else {
                         this.$message.info(response.data.msg)
@@ -201,7 +280,7 @@
             },
             //图片预览
             handlePreview(file) {
-                this.previewPath = "/api"+ file.response.info
+                this.previewPath = file.response.info
                 console.log(this.previewPath)
                 this.previewDialogVisible = true
             },
@@ -220,7 +299,7 @@
                 console.log(res);
                 if (parseInt(res.code) === 200) {
                     this.$message.success(res.msg)
-                    this.addForm.find_img_list.push(res.info)
+                    this.addForm.find_img_list.push("/api"+res.info)
                     console.log(this.addForm.find_img_list);
                 } else {
                     this.$message.error(res.msg)
@@ -229,18 +308,20 @@
             //监听pagesize改变的事件
             handleSizeChange(newSize) {
                 this.queryInfo.pagesize = newSize
-                this.getfindList()
+                this.getFindList()
             },
             //监听页码值改变的事件
             handleCurrentChange(newPage) {
                 this.queryInfo.pagenum = newPage
-                this.getFindList()
+                this.findList = this.totalFindList_admin[newPage-1];
             },
 
             //确定添加用户
             addFind() {
+
                 this.$refs.addFormRef.validate(valid => {
                     if (valid) {
+
                         axios.post('/api/find/addfind', JSON.stringify(this.addForm),{
                             headers:{
                                 'Content-Type': 'application/json',
@@ -250,6 +331,7 @@
 
                             if (parseInt(response.data.code) === 200) {
                                 //隐藏对话框
+
                                 this.$message.success(response.data.msg)
                                 this.reload();
                             } else {

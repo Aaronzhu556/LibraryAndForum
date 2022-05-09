@@ -1,5 +1,6 @@
 package org.com.Controller;
 
+import org.com.Entity.Find;
 import org.com.Entity.Lost;
 import org.com.Entity.QueryInfo;
 import org.com.MyResponse.MyResponse;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.LinkedList;
+import java.text.ParseException;
 import java.util.List;
 
 @Controller
@@ -24,33 +25,9 @@ public class LostController {
     public MyResponse GetAllLost(@RequestBody QueryInfo queryInfo, @RequestHeader("Authorization")String token) {
         if (JwtUtil.VerifyToken(token)) {
             List<Lost> losts = lostService.GetAllLost(queryInfo);
-            List<Lost> lostList = new LinkedList<>();
             int page = 0;
             if (!losts.isEmpty()) {
-
-                int count = 0;
-                if (!queryInfo.getQuerydata().equals(queryInfo.getQuerytext()) && queryInfo.getPagenum() != 1) { // 说明这是第一次查询
-                    for (int i = 0; count < queryInfo.getPagesize(); i++) {
-                        try {
-                            lostList.add(losts.get(i));
-                            count++;
-                        } catch (Exception e) {
-                            break;
-                        }
-                    }
-                    page = 1;
-                } else {
-                    for (int i = ((queryInfo.getPagenum() - 1) * queryInfo.getPagesize()); count < queryInfo.getPagesize(); i++) {
-                        try {
-
-                            lostList.add(losts.get(i));
-                            count++;
-                        } catch (Exception e) {
-                            break;
-                        }
-                    }
-                }
-                return new MyResponse("200", "查询成功", String.valueOf(losts.size()), lostList, String.valueOf(page));
+                return new MyResponse("200", "查询成功", String.valueOf(losts.size()), losts, String.valueOf(page));
             } else return new MyResponse("201", "没有这些信息", "", null, "");
         } else return new MyResponse("202", "Jwt验证失败", "", null, "");
     }
@@ -80,5 +57,22 @@ public class LostController {
             lostService.UpdateLostStatus(lost_id,lost_status);
             return new MyResponse("200","更新状态成功","",null,"");
         }else return new MyResponse("201","Jwt验证失败","",null,"");
+    }
+    @ResponseBody
+    @RequestMapping("/deletelost")
+    public MyResponse DeleteLost(@RequestParam int lost_id,@RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            lostService.DeleteLost(lost_id);
+            return new MyResponse("200","删除成功","",null,"");
+        }else   return new MyResponse("201","Jwt验证失败","",null,"");
+    }
+    @ResponseBody
+    @RequestMapping("/getlostbytimerange")
+    public MyResponse GetLostByTime(@RequestParam String start_time,@RequestParam String end_time,@RequestHeader("Authorization")String token) throws ParseException {
+        if (JwtUtil.VerifyToken(token)){
+            List<Lost> lostList = lostService.GetLostByTime(start_time, end_time);
+
+            return new MyResponse("200","查询成功",String.valueOf(lostList.size()),lostList,"");
+        }else   return new MyResponse("201","Jwt验证失败","",null,"");
     }
 }

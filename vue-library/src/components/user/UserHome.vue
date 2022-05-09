@@ -53,18 +53,7 @@
                                 <tbody>
                                 <tr>
                                     <td width="73" valign="top" align="center">
-<!--                                        <img-->
-<!--                                                :src="require(`@/assets/${$store.state.user.userImg}`)"-->
-<!--                                                class="avatar"-->
-<!--                                                border="0"-->
-<!--                                                align="default"-->
-<!--                                        />-->
-<!--                                         <img-->
-<!--                                          src="//cdn.v2ex.com/gravatar/873548b247e76e0e16ac5f8280c0004c?s=73&amp;d=retro"-->
-<!--                                          class="avatar"-->
-<!--                                          border="0"-->
-<!--                                          align="default"-->
-<!--                                        />-->
+
                                         <el-upload
                                                 class="avatar-uploader"
                                                 action="/api/user/uploadimg"
@@ -85,10 +74,11 @@
                                     <td width="auto" valign="top" align="left">
                                         <div class="fr"></div>
                                         <h1 style="margin-bottom: 5px;">{{this.article.username}}</h1>
-
+                                        <el-button v-if="this.isGuest===false " type="primary" icon="el-icon-edit" size="mini" style="float: right"  @click="openEditDialog"></el-button>
                                         <span class="gray">
+
                         <div class="sep5"></div>
-                      ccc
+                      {{this.user.user_motto}}
                       </span>
                                         <el-button v-if="this.isGuest===true && this.isFollow===false" style="float: right" type="primary" class="el-icon-plus" size="mini" @click="followUser()">关注</el-button>
                                         <el-button v-else-if="this.isGuest===true && this.isFollow===true" style="float: right" type="primary"  class="el-icon-minus" size="mini"  @click="unFollowUser()">取消关注</el-button>
@@ -111,7 +101,9 @@
 
                     <div class="sep20"></div>
                     <div class="box" >
-                        <div class="inner">
+                        <el-empty description="用户账号为私密" v-if="this.user.user_privacy==='0'&&this.isGuest===true"></el-empty>
+                        <div v-if="this.user.user_privacy==='1' ||this.user.user_privacy==='0'&& this.isGuest===false">
+                        <div class="inner"  >
                             <el-tabs v-model="activeName" @tab-click="handleClick">
                                 <el-tab-pane label="帖子" name="0"></el-tab-pane>
                                 <el-tab-pane label="已借阅的书籍" name="1"></el-tab-pane>
@@ -119,10 +111,9 @@
                                 <el-tab-pane label="自习室签到签退" name="3" v-if="isGuest===false"></el-tab-pane>
                             </el-tabs>
                         </div>
-
-
                         <div class="inner" v-if="activeName==='0'" style="height: 350px">
                             <el-empty description="暂无数据" v-if="articleListByUser.length===0"></el-empty>
+
                             <span class="chevron"></span>
                             <el-scrollbar style="height: 100%" >
                             <div class="box" v-for="(article, index) in articleListByUser" :key="index">
@@ -158,12 +149,6 @@
                                                     {{article.article_reply_num}}
                                                 </a>
 
-<!--                                                <a class="level-item">-->
-<!--                          <span class="icon is-small">-->
-<!--                            <i class="fas fa-heart"></i>-->
-<!--                          </span>-->
-<!--                                                    111-->
-<!--                                                </a>-->
                                             </div>
                                         </nav>
                                     </div>
@@ -174,6 +159,7 @@
                         </div>
                         <div class="inner" v-if="activeName==='1'" style="height: 350px">
                             <el-empty description="暂无数据" v-if="bookListByUser.length===0"></el-empty>
+                            <el-empty description="用户设置为私密" v-if="this.user.user_privacy===0"></el-empty>
                             <span class="chevron"></span>
 
                             <el-scrollbar style="height: 100%" >
@@ -205,6 +191,7 @@
                         </div>
                         <div class="inner" v-if="activeName==='2'" style="height: 350px">
                             <el-empty description="暂无数据" v-if="bookListWithoutComment.length===0"></el-empty>
+
                             <span class="chevron"></span>
 
                             <el-scrollbar style="height: 100%" >
@@ -265,6 +252,7 @@
                         </div>
                         <div class="inner" v-if="activeName==='3'" style="height: 350px">
                             <el-empty description="暂无数据" v-if="seatInfoList_user.length===0"></el-empty>
+                            <el-empty description="用户设置为私密" v-if="this.user.user_privacy===0"></el-empty>
                             <span class="chevron"></span>
 
                             <el-scrollbar style="height: 100%" >
@@ -303,13 +291,47 @@
 
 
                         </div>
-
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="c"></div>
             <div class="sep20"></div>
         </div>
+        <!--修改用户的对话框-->
+        <el-dialog title="修改个人信息" width="50%" :visible.sync="editDialogVisible" :close-on-click-modal="false" @close="editDialogClosed">
+            <!--内容主体-->
+            <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="70px">
+                <el-form-item label="用户名" prop="user_name">
+                    <el-input v-model="editForm.user_name" :disabled="true"></el-input>
+                </el-form-item>
+
+                <el-form-item label="手机号" prop="user_phone">
+                    <el-input v-model="editForm.user_phone"></el-input>
+                </el-form-item>
+                <el-form-item label="隐私状态" prop="email">
+                    <el-switch
+                            active-color="#13ce66"
+                            inactive-color="#ff4949"
+                            v-model="editForm.user_privacy"
+                            active-value="1"
+                            inactive-value="0"
+                            active-text="公开"
+                            inactive-text="私密"
+                            >
+
+                    </el-switch>
+                </el-form-item>
+                <el-form-item label="个性签名">
+                    <el-input type="textarea" v-model="editForm.user_motto"></el-input>
+                </el-form-item>
+            </el-form>
+            <!--底部-->
+            <span slot="footer">
+				<el-button @click=" editDialogClosed">取 消</el-button>
+				<el-button type="primary" @click="editUser">确 定</el-button>
+			</span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -317,6 +339,7 @@
         inject:['reload'],
         name: 'user_home',
         data() {
+
             return {
 
                 article:{
@@ -324,6 +347,20 @@
                     title : '',
                     username : '',
                     content : ''
+                },
+                user:{},
+                editDialogVisible:false,
+                editForm:{},
+                editFormRules:{
+
+                    user_phone: [
+                        { required: true, message: '手机号不能为空', trigger: 'blur' },
+                        { type: 'string', pattern: /^1[3|4|5|6|7|8][0-9]{9}$/, message: '手机号格式出错', trigger: 'blur' ,max:11}
+                    ],
+                    user_motto: [
+                        { required: true, message: '个性签名不能为空', trigger: 'blur' ,max:100},
+
+                    ]
                 },
                 centerDialogVisible:false,
                 imageUrl:'',
@@ -350,12 +387,14 @@
                 previewDialogVisible: false,
                 colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
                 seatInfoList_user:[],
+                allUserName:[],
             }
         },
         created() {
 
             this.article.username = this.$route.query.articleusername;
             this.queryUserImg();
+            this.queryUserInfo();
             this.getAllArticleByUser();
             this.getAllBookByUser();
             this.getBookWithoutComment();
@@ -370,6 +409,91 @@
 
         },
         methods: {
+            editDialogClosed(){
+
+                this.editDialogVisible = false;
+                this.reload();
+
+            },
+            editUser(){
+                this.$refs.editFormRef.validate(valid => {
+                    if (valid){
+
+                        axios.post("/api/user/updateuserinfo",JSON.stringify(this.editForm),
+                            {
+                                headers:{
+                                    'Content-Type': 'application/json'
+                                }
+                            }
+                        ).then(response=>{
+                            if (parseInt(response.data.code)===200){
+                                this.$message({
+                                    showClose:true,
+                                    message:'更新用户信息成功',
+                                    type:'success'
+                                });
+                                this.reload();
+                            }else {
+                                this.$message({
+                                    showClose:true,
+                                    message:'更新用户信息失败',
+                                    type:'error'
+                                });
+                            }
+
+                        }).catch(function (error) {
+                            this.$message.error("发生错误")
+                        })
+                    }
+                })
+            },
+            openEditDialog(){
+
+                this.editDialogVisible=true;
+
+            },
+
+
+            queryUserInfo(){
+                axios.get("/api/user/queryuserinfo",{
+                    params:{
+                        user_name :  this.article.username
+                    },
+                    headers:{
+                        'Authorization' : sessionStorage.getItem('token')
+                    }
+                }).then((response)=>{
+                    if (parseInt(response.data.code)===200){
+
+                        this.editForm = response.data.object;
+                        this.user = response.data.object;
+
+                    }
+                }).catch(()=>{
+                    this.$message.error("发生错误")
+                })
+
+
+            },
+            queryUserImg(){
+                axios.get("/api/user/queryuserimg",{
+                    params:{
+                        user_name :  this.article.username
+                    },
+                    headers:{
+                        'Authorization' : sessionStorage.getItem('token')
+                    }
+                }).then((response)=>{
+                    if (parseInt(response.data.code)===200){
+
+                        this.imageUrl =  response.data.info;
+                    }
+                }).catch(()=>{
+                    this.$message.error("发生错误")
+                })
+
+
+            },
             signout(seatinfo_id){
                 axios.get("/api/seatinfo/signout",{
                     params:{
@@ -517,24 +641,7 @@
                     this.$message.error(res.msg)
                 }
             },
-            queryUserImg(){
-                axios.get("/api/user/queryuserimg",{
-                    params:{
-                        user_name :  this.article.username
-                    },
-                    headers:{
-                        'Authorization' : sessionStorage.getItem('token')
-                    }
-                }).then((response)=>{
-                    if (parseInt(response.data.code)===200){
-                        this.imageUrl = "/api" + response.data.info;
-                    }
-                }).catch(()=>{
-                    this.$message.error("发生错误")
-                })
 
-
-            },
 
 
             openComment(current_data){

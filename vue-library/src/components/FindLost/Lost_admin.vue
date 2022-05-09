@@ -17,21 +17,21 @@
                     </el-input>
                 </el-col>
                 				<el-col :span="6">
-                					<el-button type="primary" @click="addDialogVisible=true">添加失物信息</el-button>
+                					<el-button type="primary" @click="addDialogVisible=true">添加拾物信息</el-button>
                 				</el-col>
             </el-row>
 
             <!--用户列表-->
             <el-table :data="lostList" :border="true" :stripe="true">
                 <el-table-column label="序号" prop="lost_id" width="50"></el-table-column>
-                <el-table-column label="失物名" prop="lost_name"></el-table-column>
-                <el-table-column label="失物细节" prop="lost_details"></el-table-column>
-                <el-table-column label="失物图片" scope>
+                <el-table-column label="拾物名" prop="lost_name"></el-table-column>
+                <el-table-column label="拾物细节" prop="lost_details"></el-table-column>
+                <el-table-column label="拾物图片" scope>
                     <template slot-scope="scope">
                         <el-button icon="el-icon-search" circle @click="openDialog2(scope.row)"></el-button>
                     </template>
                 </el-table-column>
-                <el-table-column label="登记时间" prop="lost_time"></el-table-column>
+                <el-table-column label="拾取时间" prop="lost_time"></el-table-column>
 
 
                 <!--				<el-table-column label="用户余额" prop="user_money"></el-table-column>-->
@@ -50,6 +50,14 @@
                         </el-switch>
                     </template>
                 </el-table-column>
+                <el-table-column
+
+                        label="操作">
+                    <template slot-scope="scope">
+                        <el-button @click="deleteLost(scope.row)" type="text" size="small">删除</el-button>
+
+                    </template>
+                </el-table-column>
 
 
             </el-table>
@@ -63,16 +71,19 @@
 
 
         		<!--添加用户的对话框-->
-        		<el-dialog title="添加失物" width="50%" :visible.sync="addDialogVisible" :close-on-click-modal="false" @close="addDialogClosed">
+        		<el-dialog title="添加拾物" width="50%" :visible.sync="addDialogVisible" :close-on-click-modal="false" @close="addDialogClosed" :label-position="labelPosition" >
         			<!--内容主体-->
-        			<el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
-        				<el-form-item label="失物名" prop="lost_name">
+        			<el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px">
+        				<el-form-item label="拾物名" prop="lost_name">
         					<el-input v-model="addForm.lost_name"></el-input>
         				</el-form-item>
-        				<el-form-item label="失物细节" prop="lost_details">
+        				<el-form-item label="拾物细节" prop="lost_details">
         					<el-input v-model="addForm.lost_details"></el-input>
         				</el-form-item>
-                        <el-form-item label="失物图">
+                        <el-form-item label="拾物时间" prop="lost_time">
+                            <el-date-picker type="datetime"   :picker-options="pickerBeginDateBefore" placeholder="选择日期" format="yyyy/MM/DD HH:mm:ss" value-format="yyyy/MM/dd HH:mm:ss"  v-model="addForm.lost_time" style="width: 100%;" @change="getLostDate"></el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="拾物图">
                             <el-upload action="/api/lost/uploadlostimg" :on-preview="handlePreview"
                                        :on-remove="handleRemove" list-type="picture" :headers="headerObj"  :limit="3" :on-success="handleSuccess" name="lost_img">
                                 <el-button type="primary">点击上传</el-button>
@@ -101,6 +112,11 @@
         data() {
 
             return {
+                pickerBeginDateBefore: {
+                    disabledDate(time) {
+                        return time.getTime() > Date.now();
+                    }
+                },
                 //获取用户列表的参数对象
                 queryInfo: {
                     querytext: '',
@@ -110,19 +126,27 @@
 
                 },
                 lostList: [],
+                totalLostList_admin:[[]],
+                losts:[],
+                max_page:0,
                 total: 0,
                 addForm:{
                     lost_name:'',
                     lost_details:'',
+                    lost_time:'',
                     lost_img_list:[],
                 },
+                labelPosition :'left',
                 addFormRules:{
                     lost_name: [
-                        {required: true, message: '请输入失物名称', trigger: 'blur'}
+                        {required: true, message: '请输入拾物名称', trigger: 'blur'}
                     ],
                     lost_details: [
-                        {required: true, message: '请输入失物细节', trigger: 'blur'}
+                        {required: true, message: '请输入拾物细节', trigger: 'blur'}
                     ],
+                    lost_time:[
+                        {required: true, message: '请选择拾物时间', trigger: 'blur'}
+                    ]
 
                 },
                 //添加用户对话框显示状态
@@ -141,13 +165,41 @@
             this.getLostList()
         },
         methods: {
+            resetAllData(){
+                this.queryInfo.pagenum = 1;
+                this.lostList = [];
+                this.totalLostList_admin =[[]];
+                this.losts=[];
+                this.max_page=0;
+                this.total= 0;
+            },
+            deleteLost(current_data){
+                axios.delete("/api/lost/deletelost",{
+                    params:{
+                        lost_id: current_data.lost_id
+                    },
+                    headers:{
+                        'Authorization' : sessionStorage.getItem('token')
+                    }
+                }).then(response =>{
+                    if (parseInt(response.data.code)===200){
+                        this.$message.success("删除成功");
+                        this.getLostList();
+                    }
+                }).catch(()=>{
+                    this.$message.error("发生错误")
+                })
+            },
+            getLostDate(datetime){
+                this.addForm.lost_time = datetime;
+            },
             closeDialog2(){
                 this.previewDialogVisible2 = false;
             },
             openDialog2(current_data){
                 this.previewPathList=[];
                 for (var i=0;i<current_data.lost_img_list.length;i++){
-                    this.previewPathList.push("/api"+current_data.lost_img_list[i]);
+                    this.previewPathList.push(current_data.lost_img_list[i]);
                 }
                 this.previewDialogVisible2 =true;
             },
@@ -158,6 +210,7 @@
                 this.addDialogVisible = false;
             },
             getLostList() {
+                this.resetAllData();
                 axios.post('/api/lost/getalllost', JSON.stringify(this.queryInfo), {
                     headers: {
                         'Content-Type': 'application/json'
@@ -165,7 +218,16 @@
 
                 }).then(response => {
                     if (parseInt(response.data.code) === 200) {
-                        this.lostList = response.data.object;
+                        this.losts = response.data.object;
+                        this.max_page = Math.ceil(this.losts.length / this.queryInfo.pagesize) || 1;
+                        for (let i = 0; i < this.max_page; i++) {
+                            this.totalLostList_admin[i] = this.losts.slice(
+                                this.queryInfo.pagesize * i,
+                                this.queryInfo.pagesize * (i + 1)
+                            );
+                            console.log(this.totalLostList_admin[i]);
+                        }
+                        this.lostList = this.totalLostList_admin[this.queryInfo.pagenum-1];
 
                         this.total = parseInt(response.data.info);
                     } else {
@@ -200,7 +262,7 @@
             },
             //图片预览
             handlePreview(file) {
-                this.previewPath = "/api"+ file.response.info
+                this.previewPath = file.response.info
                 console.log(this.previewPath)
                 this.previewDialogVisible = true
             },
@@ -219,7 +281,7 @@
                 console.log(res);
                 if (parseInt(res.code) === 200) {
                     this.$message.success(res.msg)
-                    this.addForm.lost_img_list.push(res.info)
+                    this.addForm.lost_img_list.push("/api"+res.info)
                     console.log(this.addForm.lost_img_list);
                 } else {
                     this.$message.error(res.msg)
@@ -233,7 +295,8 @@
             //监听页码值改变的事件
             handleCurrentChange(newPage) {
                 this.queryInfo.pagenum = newPage
-                this.getLostList()
+                //this.getLostList()
+                this.lostList = this.totalLostList_admin[newPage-1];
             },
             //监听添加用户对话框的关闭事件
             addDialogClosed() {

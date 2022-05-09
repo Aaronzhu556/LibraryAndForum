@@ -38,4 +38,7 @@ public interface UserMapper {
 
     @Update("update t_user set user_status=#{user_status} where user_id=#{user_id}")
     public int UpdateUserStatus(String user_status,int user_id);
+
+    @Update("update t_user set user_phone=#{user_phone},user_privacy=#{user_privacy},user_motto=#{user_motto} where user_id=#{user_id}")
+    public int UpdateUserInfo(User user);
 }

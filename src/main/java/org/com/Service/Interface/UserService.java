@@ -17,6 +17,8 @@ public interface UserService {
     public int ChangeUserStatus(int user_id,String user_status);
     public int GetAllUserNum();
     public List<User> GetHotUser();
+    public User GetUserInfo(String user_name);
+    public int EditUserInfo(User user);
 
 
 }

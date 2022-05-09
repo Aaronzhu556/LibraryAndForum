@@ -77,6 +77,9 @@
 					querydata:'',
 				},
 				booksList_admin: [],
+				totalBookList_admin :[[]],
+				books:[],
+				max_page:0,
 				total: 0,
 				previewDialogVisible: false,
 				previewPath : "",
@@ -88,7 +91,16 @@
 			console.log(this.managerRole);
 		},
 		methods: {
+			resetAllData(){
+				this.queryInfo.pagenum = 1;
+				this.booksList_admin = [];
+				this.totalBookList_admin =[];
+				this.books=[];
+				this.max_page=0;
+				this.total= 0;
+			},
 			getBookList(){
+				this.resetAllData();
 				axios.post('/api/book/querybooks',JSON.stringify({
 					querytext:this.queryInfo.querytext,
 					pagenum:this.queryInfo.pagenum,
@@ -102,13 +114,18 @@
 
 				}).then(response => {
 					if (parseInt(response.data.code) === 200) {
-						this.booksList_admin = response.data.object;
-						this.queryInfo.querydata = this.queryInfo.querytext;
-						if (parseInt(response.data.page)===1){
-							this.queryInfo.pagenum = parseInt(response.data.page);
+						this.books = response.data.object;
+						this.max_page = Math.ceil(this.books.length / this.queryInfo.pagesize) || 1;
+						for (let i = 0; i < this.max_page; i++) {
+							this.totalBookList_admin[i] = this.books.slice(
+									this.queryInfo.pagesize * i,
+									this.queryInfo.pagesize * (i + 1)
+							);
+							console.log(this.totalBookList_admin[i]);
 						}
-						console.log("Hi 这里出错啦")
-						console.log(this.bookList)
+						this.booksList_admin = this.totalBookList_admin[this.queryInfo.pagenum-1];
+
+
 						this.total = parseInt(response.data.info);
 					} else {
 						this.$message.info(response.data.msg)
@@ -118,23 +135,9 @@
 					console.log(e);
 				})
 			},
-			/*
-			*预览图片 懒加载模式
-			* */
-			/*
-			PreviewPhoto(current_data){
-				this.product_photos = current_data;
-				console.log(this.product_photos)
-				for (var i=0;i<this.product_photos.length;i++){
-					this.product_photos[i] = "/api" + this.product_photos[i];
-				}
-				console.log(this.product_photos);
-				this.previewDialogVisible = true;
-			},
 
-			 */
 			PreviewPhoto(current_data){
-				this.previewPath = "/api"+current_data;
+				this.previewPath = current_data;
 				this.previewDialogVisible = true;
 				console.log(this.previewPath)
 			},
@@ -181,7 +184,8 @@
 			//监听页码值改变的事件
 			handleCurrentChange(newPage) {
 				this.queryInfo.pagenum = newPage
-				this.getBookList()
+				//this.getBookList()
+				this.booksList_admin = this.totalBookList_admin[this.queryInfo.pagenum-1];
 			},
 
 			goAddPage(){

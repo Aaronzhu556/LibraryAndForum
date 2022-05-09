@@ -214,6 +214,9 @@
                     user_img : '',
                 },
                 commentList:[],
+                comments:[],
+                totalComments:[[]],
+                max_page:0,
                 inputForm:{
                     text:'',
                     from:'',
@@ -244,6 +247,14 @@
             // console.log(this.managerRole);
         },
         methods: {
+            resetAllData(){
+                this.queryInfo.pagenum = 1;
+                this.commentList = [];
+                this.totalComments =[[]];
+                this.comments=[];
+                this.max_page=0;
+                this.total= 0;
+            },
             deleteComment(comment_id){
                 axios.get('/api/comment/deletecomment',{
                     params:{
@@ -388,6 +399,7 @@
             },
 
             getCommentList(){
+                this.resetAllData();
                 axios.get('/api/comment/queryallcomment',
                     {
                         params:{
@@ -400,8 +412,16 @@
 
                     }).then(response => {
                     if (parseInt(response.data.code) === 200) {
-                        this.commentList = response.data.object;
-
+                        this.comments = response.data.object;
+                        this.max_page = Math.ceil(this.comments.length / this.queryInfo.pagesize) || 1;
+                        for (let i = 0; i < this.max_page; i++) {
+                            this.totalComments[i] = this.comments.slice(
+                                this.queryInfo.pagesize * i,
+                                this.queryInfo.pagesize * (i + 1)
+                            );
+                            console.log(this.totalComments[i]);
+                        }
+                        this.commentList = this.totalComments[this.queryInfo.pagenum-1];
                         console.log(this.commentList)
                         this.total = parseInt(response.data.info);
                     } else {
@@ -423,7 +443,8 @@
             //监听页码值改变的事件
             handleCurrentChange(newPage) {
                 this.queryInfo.pagenum = newPage
-                this.getCommentList()
+               //this.getCommentList()
+                this.commentList = this.totalComments[newPage-1];
             },
 
         }
