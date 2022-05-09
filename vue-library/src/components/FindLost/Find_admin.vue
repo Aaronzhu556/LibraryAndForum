@@ -88,7 +88,7 @@
                     <el-input v-model="addForm.find_details"></el-input>
                 </el-form-item>
                 <el-form-item label="失物时间" prop="find_time">
-                    <el-date-picker type="datetime" :picker-options="pickerBeginDateBefore" placeholder="选择日期" format="yyyy/MM/DD HH:mm:ss" value-format="yyyy/MM/dd HH:mm:ss"  v-model="addForm.find_time" @change="getFindDate" ></el-date-picker>
+                    <el-date-picker type="datetime" :picker-options="pickerBeginDateBefore" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss"  v-model="addForm.find_time" @change="getFindDate" ></el-date-picker>
                 </el-form-item>
                 <el-form-item label="失物等级" prop="find_level">
                     <el-radio-group v-model="addForm.find_level" size="small">
