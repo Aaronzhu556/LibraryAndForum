@@ -16,6 +16,8 @@
 ![图书评论](https://github.com/Aaron-zhu1342/img_resoures/blob/master/graduateproject2/%E5%9B%BE%E4%B9%A6%E8%AF%84%E8%AE%BA.png)
 **自习室位置预约**
 ![位置预约](https://github.com/Aaron-zhu1342/img_resoures/blob/master/graduateproject2/%E8%87%AA%E4%B9%A0%E5%AE%A4%E4%BD%8D%E7%BD%AE%E9%A2%84%E7%BA%A6.png)
+**失物招领**
+![失物招领](https://github.com/Aaron-zhu1342/img_resoures/blob/master/graduateproject2/%E5%A4%B1%E7%89%A9%E6%8B%9B%E9%A2%86.png)
 **论坛首页**
 ![论坛首页](https://github.com/Aaron-zhu1342/img_resoures/blob/master/graduateproject2/%E8%AE%BA%E5%9D%9B%E9%A6%96%E9%A1%B5.png)
 **论坛详情**
