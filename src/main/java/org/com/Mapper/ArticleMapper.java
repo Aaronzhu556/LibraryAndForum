@@ -53,5 +53,8 @@ public interface ArticleMapper {
     @Update("update t_article set article_click=#{article_click} where article_id=#{article_id}")
     public int UpdateArticleClick(int article_click,int article_id);
 
+    @Select("select article_id from t_article")
+    public List<Integer>GetAllArticleId();
+
 
 }

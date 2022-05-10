@@ -534,8 +534,7 @@
 						if (this.queryInfo.querytext!=="") this.$message.success("已显示关于"+this.queryInfo.querytext+"的帖子");
 
 						this.total = parseInt(response.data.info);
-						//this.articleList_Hot = this.articleList.slice(0,5);
-						//this.changeArticleTitle();
+
 					} else {
 						this.$message.info(response.data.msg)
 					}
@@ -581,12 +580,7 @@
                 this.articleList = this.totalArticleList[newPage-1];
 			},
 
-			goAddPage(){
-				this.$router.push('/books_admin/add')
-			},
-			goEditPage(id){
-				this.$router.push(`/goods/edit/${id}`)
-			}
+
 		}
 	}
 </script>

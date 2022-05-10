@@ -4,15 +4,15 @@ import org.com.Entity.Article;
 import org.com.Entity.QueryInfo;
 import org.com.Mapper.*;
 import org.com.Service.Interface.ArticleService;
+import org.com.util.CreatFileUtil;
+import org.com.util.PythonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -133,8 +133,35 @@ public class ArticleServiceImpl implements ArticleService {
         return articles;
 
     }
+    /*
+    * 相似帖子推荐算法
+    * */
+    @Override
+    public List<Article> GetSimilarArticle(int article_id){
+        List<Article> articles = articleMapper.QueryAllArticle();
+        List<Integer> list = articleMapper.GetAllArticleId();
+        List<Article> articleList = new LinkedList<>();
+        try{
+            CreatFileUtil.creatFile(articles);
+        }catch (Exception e){
+
+        }
+        int article_index = list.indexOf(article_id);
+        String recommendArticle = PythonUtils.recommendArticle(article_index);
+        List<String> stringList = Arrays.asList(recommendArticle.split(","));
+        int count =0;
+        String str=null;
+        for (String s: stringList){
+            int index = s.indexOf(".");
+            if (count==0) str=s.substring(28,index);
+            else str=s.substring(27,index);
+            count=count++;
+            System.out.println(str);
+            articleList.add(articleMapper.QueryArticleById(Integer.valueOf(str)));
+        }
+        return articleList;
+    }
+
 }
-/**
- * 本周主要做
- *
- * */
+
+

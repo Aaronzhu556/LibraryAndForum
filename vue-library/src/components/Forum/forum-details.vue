@@ -21,15 +21,15 @@
                         <!--                                <p class="card-header-title"  >发帖数量:5</p>-->
                     </header>
 
-                    <div class="card-content" style="height: 350px">
+                    <div class="card-content" style="height: 350px"    v-loading="loadingStatus">
                         <el-scrollbar style="height: 100%" >
-                            <div v-for="(article,index) in 10" :key="index">
+                            <div v-for="(article,index) in similarArticle" :key="index">
 
                                 <el-tag type="danger">{{index+1}}</el-tag>
 
                                 <el-tooltip class="item" effect="light" placement="top">
-                                    <div slot="content">霍乱时期的爱情</div>
-                                    <el-button type="text" style="position: relative;left: 30px;color: 	#000000" @click="CheckHotArticleDetail(article)">霍乱时期的爱情</el-button>
+                                    <div slot="content">{{article.article_title}}</div>
+                                    <el-button type="text" style="position: relative;left: 30px;color: 	#000000" @click="CheckSimilarArticleDetail(article)">{{similarArticle_simple[index]}}</el-button>
                                 </el-tooltip>
 
 
@@ -225,11 +225,12 @@
                 commentContent:'',
                 total: 0,
                 similarArticle:[],
+                similarArticle_simple:[],
                 user_name:'',
                 previewDialogVisible: false,
                 previewPath : "",
                 input:'',
-
+                loadingStatus:true,
                 btnShow: false,
 
 
@@ -243,10 +244,45 @@
             this.article.user_img = this.$route.query.articleuserimg;
             this.getArticleContent();
             this.getCommentList();
+            this.getSimilarArticle();
 
             // console.log(this.managerRole);
         },
         methods: {
+            CheckSimilarArticleDetail(current_data){
+                console.log(current_data)
+                this.detail(current_data.article_id,current_data.article_title,current_data.article_user_name,current_data.article_user_img);
+            },
+            changeArticleTitle(){
+                var i=0;
+                for (i=0;i<this.similarArticle.length;i++){
+                    if (this.similarArticle[i].article_title.length>10) {
+                        this.similarArticle_simple[i] = this.similarArticle[i].article_title.slice(0, 9) + "...";
+                    }else this.similarArticle_simple[i] = this.similarArticle[i].article_title;
+
+                }
+                console.log(this.similarArticle_simple)
+            },
+            getSimilarArticle(){
+                axios.get("/api/article/getsimilararticle",{
+                    params:{
+                        article_id:this.article.id
+                    },
+                    headers:{
+                        'Authorization':sessionStorage.getItem('token')
+                    }
+                }).then(response=>{
+                    if (parseInt(response.data.code)===200){
+                        this.similarArticle = response.data.object;
+                        console.log(this.similarArticle)
+
+                        this.changeArticleTitle();
+                        this.loadingStatus = false;
+                    }
+                })
+            },
+
+
             resetAllData(){
                 this.queryInfo.pagenum = 1;
                 this.commentList = [];

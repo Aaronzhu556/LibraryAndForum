@@ -134,8 +134,14 @@ public class ArticleController {
             return new MyResponse("200","分析成功","",articles.subList(0,5),"");
         }else  return new MyResponse("201","Jwt验证失败","",null,"");
     }
-//
-//    @ResponseBody
-//    @RequestMapping
+
+    @ResponseBody
+    @RequestMapping("/getsimilararticle")
+    public MyResponse GetSimilarArticle(@RequestParam int article_id,@RequestHeader("Authorization")String token){
+        if (JwtUtil.VerifyToken(token)){
+            List<Article> articles = articleService.GetSimilarArticle(article_id);
+            return new MyResponse("200","获取成功","",articles,"");
+        }else return new MyResponse("201","Jwt验证失败","",null,"");
+    }
 
 }

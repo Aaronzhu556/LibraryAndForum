@@ -27,4 +27,6 @@ public interface ArticleService {
 
     public int UpdateArticleClick(int article_id);
 
+    public List<Article> GetSimilarArticle(int article_id);
+
 }
