@@ -26,6 +26,8 @@
 ![用户中心1](https://github.com/Aaron-zhu1342/img_resoures/blob/master/graduateproject2/%E7%94%A8%E6%88%B7%E4%B8%AD%E5%BF%83.png)
 **用户中心2**
 ![用户中心2](https://github.com/Aaron-zhu1342/img_resoures/blob/master/graduateproject2/%E7%94%A8%E6%88%B7%E4%B8%AD%E5%BF%832.png)
+**数据分析**
+![数据分析](https://github.com/Aaron-zhu1342/img_resoures/blob/master/graduateproject2/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90.png)
 
 
 
